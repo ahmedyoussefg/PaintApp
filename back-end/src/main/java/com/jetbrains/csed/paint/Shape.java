@@ -1,73 +1,48 @@
 package com.jetbrains.csed.paint;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
 
-public interface Shape {
-
-    Point2D.Double getCenter();
-    void setCenter(Point2D.Double center);
-    public String getFillColor();
-    public void setFillColor(String fill_color);
-
-//    public void setStrokeColor(String stroke_color);
-//    public String getStrokeColor();
-}
-
-class Circle implements Shape {
-
+public class Shape implements IShape {
     // default values
-    private Point2D.Double center = new Point2D.Double(0,0);
+    private int id;
+    private Point2D.Double position = new Point2D.Double(0,0);
     private String fill_color = "red";
-//    private String stroke_color = "black";
-    private double radius;
-
-    Circle(){}
-    Circle(Point2D.Double center, String fill_color, double radius){
-        this.center=center;
-        this.fill_color=fill_color;
-//        this.stroke_color=stroke_color;
-        this.radius=radius;
+    private String stroke_color = "black";
+    private double rotation;
+    public double getRotation(){
+        return this.rotation;
     }
-    @Override
-    public Point2D.Double getCenter() {
-        return this.center;
+    public void setRotation(double rotation) {
+        this.rotation = rotation;
     }
-
-    @Override
-    public void setCenter(Point2D.Double center) {
-        this.center = center;
+    public int getId(){
+        return this.id;
+    }
+    public void setId(int id) {
+        this.id=id;
+    }
+    public Point2D.Double getPosition() {
+        return this.position;
     }
 
-    @Override
-    public String getFillColor() {
+    public void setPosition(Point2D.Double position) {
+        this.position = position;
+    }
+
+    public String getFill() {
         return this.fill_color;
     }
 
-    @Override
-    public void setFillColor(String fill_color) {
+    public void setFill(String fill_color) {
         this.fill_color=fill_color;
     }
 
-//    @Override
-//    public void setStrokeColor(String stroke_color) {
-//        this.stroke_color=stroke_color;
-//    }
-//
-//    @Override
-//    public String getStrokeColor() {
-//        return this.stroke_color;
-//    }
-
-    // Circle-specific
-
-    public double getRadius()
-    {
-        return this.radius;
-    }
-    public void setRadius(double radius) {
-        this.radius = radius;
+    public void setStrokeColor(String stroke_color) {
+        this.stroke_color=stroke_color;
     }
 
+    public String getStrokeColor() {
+        return this.stroke_color;
+    }
 }
 

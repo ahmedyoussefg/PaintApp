@@ -12,7 +12,7 @@ public class ShapeFactory {
         else if (shapeType.equalsIgnoreCase("circle")) {
             if (dimensions.size()!=1)
                 return null;
-            return new Circle(center, fillColor, dimensions.get(0));
+            return new Circle();
         }
         return null;
     }
