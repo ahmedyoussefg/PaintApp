@@ -13,7 +13,10 @@ public class LineSegment extends Shape{
     public void setPoints(double[] points) {
         this.points = points;
     }
-
+    @Override
+    public Shape clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
     public double[] getPoints() {
         return this.points;
     }

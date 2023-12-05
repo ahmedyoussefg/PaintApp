@@ -10,7 +10,10 @@ public class Ellipse extends Shape{
         super(data);
         this.radius = new Point2D.Double(data.radiusX, data.radiusY);
     }
-
+    @Override
+    public Shape clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
     public void setRadius(Point2D.Double radius) {
         this.radius = radius;
     }

@@ -66,7 +66,10 @@ public class Shape implements Cloneable {
 
     @Override
     public Shape clone() throws CloneNotSupportedException {
-        return (Shape) super.clone();
+        Shape cloned = (Shape) super.clone();
+        cloned.id = this.id;
+        cloned.position = new Point2D.Double(this.position.getX(), this.position.getY());
+        return cloned;
     }
 
     public ShapeDTO shapeToDTO(){

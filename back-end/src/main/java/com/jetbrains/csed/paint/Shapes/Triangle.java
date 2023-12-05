@@ -26,5 +26,8 @@ public class Triangle extends Shape {
     public void setNumOfSides(int sides) {
         this.numSides=sides;
     }
-
+    @Override
+    public Shape clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

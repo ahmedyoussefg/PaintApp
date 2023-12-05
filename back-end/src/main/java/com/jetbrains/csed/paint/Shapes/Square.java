@@ -13,7 +13,10 @@ public class Square extends Shape {
     public double getSide() {
         return this.side;
     }
-
+    @Override
+    public Shape clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
     public void setSide(double side) {
         this.side = side;
     }

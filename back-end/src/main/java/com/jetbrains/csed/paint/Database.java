@@ -1,18 +1,24 @@
 package com.jetbrains.csed.paint;
 
+import com.jetbrains.csed.paint.Actions.DrawingArea;
 import com.jetbrains.csed.paint.Shapes.Shape;
 
+import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Stack;
 
 public class Database {
     private static Database database;
 
-    private Stack<Shape> undo_stack = new Stack<>();
-    private Stack<Shape> redo_stack = new Stack<>();
+    private DrawingArea drawingArea;
+    private Stack<DrawingArea.DrawingMemento> undo_stack;
+    private Stack<DrawingArea.DrawingMemento> redo_stack;
     private int id_counter = 1;
-    private HashMap<Integer, Shape> drawnShapes;
-    private Database(){}
+    private Database(){
+        undo_stack = new Stack<>();
+        redo_stack = new Stack<>();
+        drawingArea = new DrawingArea();
+    }
     public static Database getInstance() {
         if (database == null) {
             database = new Database();
@@ -21,11 +27,7 @@ public class Database {
     }
 
     public HashMap<Integer, Shape> getDrawnShapes() {
-        return this.drawnShapes;
-    }
-
-    public void setDrawnShapes(HashMap<Integer, Shape> drawnShapes) {
-        this.drawnShapes = drawnShapes;
+        return drawingArea.getDrawnShapes();
     }
 
     public void resetRedoStack() {
@@ -35,19 +37,24 @@ public class Database {
     }
 
     public void draw(Shape new_shape) {
-        this.drawnShapes.put(this.id_counter++, new_shape);
-        this.undo_stack.push(new_shape);
+        HashMap<Integer, Shape> curr= drawingArea.getDrawnShapes();
+        curr.put(this.id_counter++, new_shape);
+        drawingArea.setShapes(curr);
+        this.undo_stack.push(drawingArea.takeSnapshot());
         this.resetRedoStack();
     }
 
     public Shape copy(Shape old_version) throws CloneNotSupportedException {
         Shape cloned = old_version.clone();
-        cloned.setId(id_counter+1);
+        cloned.setId(id_counter);
+        // make small offset in x and y of position
+        Point2D.Double new_point = new Point2D.Double(cloned.getPosition().getX()+0.6,cloned.getPosition().getY()+0.6);
+        cloned.setPosition(new_point);
         draw(cloned);
         return cloned;
     }
 
     public Shape getShapeByID(int id) {
-        return this.drawnShapes.getOrDefault(id, null);
+        return drawingArea.getDrawnShapes().getOrDefault(id, null);
     }
 }
