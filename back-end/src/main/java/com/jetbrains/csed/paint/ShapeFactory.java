@@ -5,14 +5,27 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class ShapeFactory {
-    public Shape getShape(String shapeType, Point2D.Double center, ArrayList<Double> dimensions, String fillColor) {
-        if (shapeType == null) {
+    public Shape getShape(ShapeDTO data) {
+        if (data == null) {
             return null;
         }
-        else if (shapeType.equalsIgnoreCase("circle")) {
-            if (dimensions.size()!=1)
-                return null;
-            return new Circle();
+        else if (data.shapeType.equalsIgnoreCase("circle")) {
+            return new Circle(data);
+        }
+        else if (data.shapeType.equalsIgnoreCase("rectangle")) {
+            return new Rectangle(data);
+        }
+        else if (data.shapeType.equalsIgnoreCase("triangle")) {
+            return new Triangle(data);
+        }
+        else if (data.shapeType.equalsIgnoreCase("line_segment")) {
+            return new LineSegment(data);
+        }
+        else if (data.shapeType.equalsIgnoreCase("ellipse")) {
+            return new Ellipse(data);
+        }
+        else if (data.shapeType.equalsIgnoreCase("square")) {
+            return new Square(data);
         }
         return null;
     }

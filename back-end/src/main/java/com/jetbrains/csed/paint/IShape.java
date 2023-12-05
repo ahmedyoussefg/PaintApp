@@ -16,6 +16,8 @@ public interface IShape {
     public void setRotation(double rotation);
 
     public void setStrokeColor(String stroke_color);
+    public void setStrokeWidth(double stroke_width);
+    public double getStrokeWidth();
 
     public String getStrokeColor();
 

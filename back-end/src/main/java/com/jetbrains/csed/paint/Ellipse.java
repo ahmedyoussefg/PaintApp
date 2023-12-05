@@ -6,8 +6,9 @@ public class Ellipse extends Shape{
     Point2D.Double radius;
     Ellipse(){}
 
-    Ellipse(Point2D.Double radius){
-        this.radius=radius;
+    Ellipse(ShapeDTO data){
+        super(data);
+        this.radius = new Point2D.Double(data.radiusX, data.radiusY);
     }
 
     public void setRadius(Point2D.Double radius) {

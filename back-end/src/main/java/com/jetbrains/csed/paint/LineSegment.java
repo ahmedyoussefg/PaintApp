@@ -2,30 +2,21 @@ package com.jetbrains.csed.paint;
 
 import java.awt.geom.Point2D;
 
-public class LineSegment {
+public class LineSegment extends Shape{
 
-    private Point2D.Double start;
-    private Point2D.Double end;
+    double[] points;
     LineSegment(){}
 
-    LineSegment(Point2D.Double start, Point2D.Double end){
-        this.start=start;
-        this.end=end;
+    LineSegment(ShapeDTO data){
+        super(data);
+        this.points=data.points;
     }
 
-    public Point2D.Double getStart() {
-        return this.start;
+    public void setPoints(double[] points) {
+        this.points = points;
     }
 
-    public void setStart(Point2D.Double start) {
-        this.start = start;
-    }
-
-    public Point2D.Double getEnd() {
-        return this.end;
-    }
-
-    public void setEnd(Point2D.Double end) {
-        this.end = end;
+    public double[] getPoints() {
+        return this.points;
     }
 }

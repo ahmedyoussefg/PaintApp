@@ -9,6 +9,25 @@ public class Shape implements IShape {
     private String fill_color = "red";
     private String stroke_color = "black";
     private double rotation;
+    private double stroke_width;
+    Shape(){}
+
+    Shape(ShapeDTO data) {
+        this.id=data.id;
+        this.fill_color=data.fill;
+        this.position=new Point2D.Double(data.x, data.y);
+        this.rotation=data.rotation;
+        this.stroke_color=data.strokeColor;
+        this.stroke_width=data.strokeWidth;
+    }
+
+    public void setStrokeWidth(double stroke_width) {
+        this.stroke_width=stroke_width;
+    }
+    public double getStrokeWidth() {
+        return this.stroke_width;
+    }
+
     public double getRotation(){
         return this.rotation;
     }
