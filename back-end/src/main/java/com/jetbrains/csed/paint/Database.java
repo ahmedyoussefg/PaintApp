@@ -1,5 +1,7 @@
 package com.jetbrains.csed.paint;
 
+import com.jetbrains.csed.paint.Shapes.Shape;
+
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -36,5 +38,16 @@ public class Database {
         this.drawnShapes.put(this.id_counter++, new_shape);
         this.undo_stack.push(new_shape);
         this.resetRedoStack();
+    }
+
+    public Shape copy(Shape old_version) throws CloneNotSupportedException {
+        Shape cloned = old_version.clone();
+        cloned.setId(id_counter+1);
+        draw(cloned);
+        return cloned;
+    }
+
+    public Shape getShapeByID(int id) {
+        return this.drawnShapes.getOrDefault(id, null);
     }
 }
