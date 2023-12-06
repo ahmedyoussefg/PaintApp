@@ -2,14 +2,15 @@
   <div class="main">
     <div class="tools">
       <ul class="shapes">
-        <li><button @click="usePencilTool"><span>&#9998;</span> Pencil</button></li>
-        <li><button @click="drawLine"><span style="font-size: medium;">&#9644; </span> Line</button></li>
-        <li> <button @click="drawCircle"> <span>&#9679; </span> Circle</button></li>
-        <li><button @click="drawRectangle"><span>&#9644; </span> Rectangle</button></li>
-        <li> <button @click="drawSquare"><span> &#9632; </span> Square</button></li>
-        <li><button @click="drawTriangle"><span style="font-size: smaller;">&#9650; </span>Triangle</button></li>
-          <li><button class="elip" @click="drawEllipse"><svg height="20" width="30"><ellipse cx="12" cy="10" rx="10" ry="5"
+        <li><button @click="drawshape('pencil')"><span>&#9998;</span> Pencil</button></li>
+        <li><button @click="drawshape('line')"><span style="font-size: medium;">&#9644; </span> Line</button></li>
+        <li> <button @click="drawshape('circle')"> <span>&#9679; </span> Circle</button></li>
+        <li><button @click="drawshape('rectangle')"><span>&#9644; </span> Rectangle</button></li>
+        <li> <button @click="drawshape('square')"><span> &#9632; </span> Square</button></li>
+        <li><button @click="drawshape('triangle')"><span style="font-size: smaller;">&#9650; </span>Triangle</button></li>
+          <li><button class="elip" @click="drawshape('ellipse')"><svg height="20" width="30"><ellipse cx="12" cy="10" rx="10" ry="5"
               style="display: inline-block; fill:black;" /></svg><span style="font-size: large">Ellipse</span></button></li>
+          <!-- <li><button @click="Editshape"><span>&#128400; </span>Edit</button></li> -->
 
       </ul><br>
       <div class="color-picker" @click="changeFillColor($event)">Fill Color 
@@ -34,6 +35,13 @@
 
 <script>
 import Konva from 'konva';
+import Circle from './Circle';
+import rectangle from './rectangle';
+import Square from './Square';
+import Triangle from './Triangle';
+import ellipse   from './ellipse';
+import Line from './Line';
+import ShapeDTO from './ShapeDTO';
 import ShapeFactory from './ShapeFactory';
 
 export default {
@@ -42,10 +50,17 @@ export default {
       fill_color : 'aliceblue',
       stroke_color : 'black',
       stroke_Width :2,
+      startx:0,
+      starty:0,
+      isDragging : false,
+      isDrawing : false,
+      shapetype :'null',
+      circle: null,
+      rec:null
     }
   },
   mounted() {
-    this.stage = new Konva.Stage({
+      this.stage = new Konva.Stage({
       container: this.$refs.stageContainer,
       width: window.innerWidth,
       height: window.innerHeight,
@@ -55,270 +70,135 @@ export default {
   },
 
   methods: {
-  usePencilTool() {
-  this.stage.off('mousedown');
-  this.stage.off('mousemove');
-  this.stage.off('mouseup');
-  let isDrawing = false;
-  let lastLine;
 
-  this.stage.on('mousedown touchstart', (e) => {
-    isDrawing = true;
-    let pos = this.stage.getPointerPosition();
-    lastLine = new Konva.Line({
-      stroke: this.fill_color,
-      strokeWidth: this.stroke_Width,
-      lineCap: 'round', // Smooth line ends
-      lineJoin: 'round', // Smooth line corners
-      points: [pos.x, pos.y],
-    });
-    this.layer.add(lastLine);
-  });
-
-  this.stage.on('mousemove touchmove', () => {
-    if (!isDrawing) {
-      return;
-    }
-    let pos = this.stage.getPointerPosition();
-    let newPoints = lastLine.points().concat([pos.x, pos.y]);
-    lastLine.points(newPoints);
-    this.layer.batchDraw();
-  });
-
-  this.stage.on('mouseup touchend', () => {
-    isDrawing = false;
-  });
-},
-    drawLine() {
-  this.stage.off('mousedown');
-  this.stage.off('mousemove');
-  this.stage.off('mouseup');
-
-  let startx = 0;
-  let starty = 0;
-  let isDrawing = false;
-  let line;
-
-  this.stage.on('mousedown', (e) => {
-    if (!isDrawing) {
-      isDrawing = true;
-      startx = e.evt.offsetX;
-      starty = e.evt.offsetY;
-
-      line = ShapeFactory.createShape('line', {
-        points: [startx, starty],
-        stroke: this.fill_color,
-        strokeWidth: this.stroke_Width,
+    requestBackend(shapeData)
+    {
+      axios.post('http://localhost:8081/draw',shapeData)
+      .then (response => {
+        console.log('Shape saved successfully:',response.data)
+      })
+      .catch (error => {
+        console.error('Error saving shape:' , error);
       });
 
-      this.layer.add(line);
-      this.stage.batchDraw();
-
-      this.stage.on('mousemove', (e) => {
-        if (isDrawing) {
-          const endx = e.evt.offsetX;
-          const endy = e.evt.offsetY;
-          line.points([startx, starty, endx, endy]);
-          this.stage.batchDraw();
-        }
-      });
-
-      this.stage.on('mouseup', () => {
-        if (isDrawing) {
-          isDrawing = false;
-          this.stage.off('mousemove');
-          this.stage.off('mouseup');
-        }
-      });
-    }
-  });
-},
-
-    drawCircle() {
+      
+    },
+    drawshape(shapetype)
+    {
+      let Shape = new ShapeDTO();
       this.stage.off('mousedown');
       this.stage.off('mousemove');
       this.stage.off('mouseup');
-      let startx = 0;
-      let starty = 0;
-      let isDrawing = false;
-      let circle;
-
-  this.stage.on('mousedown', (e) => {
-    if (!isDrawing) {
-      isDrawing = true;
-      startx = e.evt.offsetX;
-      starty = e.evt.offsetY;
-      
-      circle = ShapeFactory.createShape('circle', {
-        x: startx,
-        y: starty,
+      this.stage.on('mousedown', (e) => {
+      if (!this.isDrawing) {
+      this.isDrawing = true;
+      this.startx = e.evt.offsetX;
+      this.starty = e.evt.offsetY;
+      if (shapetype === 'circle')
+      {
+        this.circle = Circle.drawcircle({
+        x: this.startx,
+        y: this.starty,
         radius: 0,
         fill: this.fill_color,
         strokeWidth: this.stroke_Width,
         stroke : this.stroke_color,
+        draggable:false,
       });
       
-      this.layer.add(circle);
+      this.layer.add(this.circle);
       this.stage.batchDraw();
       
       this.stage.on('mousemove', (e) => {
-        if (isDrawing) {
+        if (this.isDrawing) {
           const radius = Math.sqrt(
-            Math.pow(e.evt.offsetX - startx, 2) +
-            Math.pow(e.evt.offsetY - starty, 2)
+            Math.pow(e.evt.offsetX - this.startx, 2) +
+            Math.pow(e.evt.offsetY - this.starty, 2)
           );
 
-          circle.radius(radius);
+          this.circle.radius(radius);
           this.stage.batchDraw();
         }
       });
-
-      this.stage.on('mouseup', () => {
-        if (isDrawing) {
-          isDrawing = false;
-          this.stage.off('mousemove');
-          this.stage.off('click');
-        }
-      });
     }
-  });
-},
-  drawRectangle() {
-    this.stage.off('mousedown');
-    this.stage.off('mousemove');
-    this.stage.off('mouseup');
-  let startx = 0;
-  let starty = 0;
-  let isDrawing = false;
-  let rectangle;
-
-  this.stage.on('mousedown', (e) => {
-    if (!isDrawing) {
-      isDrawing = true;
-      startx = e.evt.offsetX;
-      starty = e.evt.offsetY;
-      
-      rectangle = ShapeFactory.createShape('rectangle', {
-        x: startx,
-        y: starty,
+    else if (shapetype === 'rectangle')
+    {
+        this.rec = rectangle.drawrectangle({
+        x: this.startx,
+        y: this.starty,
         width: 0,
         height: 0,
         fill: this.fill_color,
         strokeWidth : this.stroke_Width,
         stroke :this.stroke_color,
+        draggable:false,
       });
-      this.stage.on('mousemove', (e) => {
-        if (isDrawing) {
-          const width = e.evt.offsetX - startx;
-          const height = e.evt.offsetY - starty;
-          rectangle.width(width);
-          rectangle.height(height);
-          this.stage.batchDraw();
-        }
-      });
-      this.stage.on('mouseup', () => {
-        if (isDrawing) {
-          isDrawing = false;
-          this.stage.off('mousemove');
-          this.stage.off('click');
-        }
-      });
-      
-      this.layer.add(rectangle);
+      this.layer.add(this.rec);
       this.stage.batchDraw();
+      this.stage.on('mousemove', (e) => {
+        if (this.isDrawing) {
+          const width = e.evt.offsetX - this.startx;
+          const height = e.evt.offsetY - this.starty;
+          this.rec.width(width);
+          this.rec.height(height);
+          this.stage.batchDraw();
+        }
+
+      });
+      
     }
-  });
-},
-drawSquare() {
-  
-  this.stage.off('mousedown');
-  this.stage.off('mousemove');
-  this.stage.off('mouseup');
-
-  let startx = 0;
-  let starty = 0;
-  let isDrawing = false;
-  let square;
-
-  this.stage.on('mousedown', (e) => {
-    if (!isDrawing) {
-      isDrawing = true;
-      startx = e.evt.offsetX;
-      starty = e.evt.offsetY;
-
-      square = ShapeFactory.createShape('rectangle', {
-        x: startx,
-        y: starty,
+    else if (shapetype === 'square')
+    {
+      let sq;
+        sq = Square.drawrsquare({
+        x: this.startx,
+        y: this.starty,
         width: 0,
         height: 0,
         fill: this.fill_color,
         strokeWidth : this.stroke_Width,
         stroke :this.stroke_color,
+        draggable:false,
       });
+      this.layer.add(sq);
+      this.stage.batchDraw();
 
       this.stage.on('mousemove', (e) => {
-        if (isDrawing) {
-          const width = e.evt.offsetX - startx;
-          const height = e.evt.offsetY - starty;
+        if (this.isDrawing) {
+          const width = e.evt.offsetX - this.startx;
+          const height = e.evt.offsetY - this.starty;
           const side = Math.min(Math.abs(width), Math.abs(height));
 
          
-          square.width(side * Math.sign(width));
-          square.height(side * Math.sign(height));
+          sq.width(side * Math.sign(width));
+          sq.height(side * Math.sign(height));
 
           this.stage.batchDraw();
         }
       });
-
-      this.stage.on('mouseup', () => {
-        if (isDrawing) {
-          isDrawing = false;
-          this.stage.off('mousemove');
-          this.stage.off('mouseup');
-        }
-      });
-
-      this.layer.add(square);
-      this.stage.batchDraw();
     }
-  });
-},
-
-drawTriangle() {
-  // Remove previous event listeners
-  this.stage.off('mousedown');
-  this.stage.off('mousemove');
-  this.stage.off('mouseup');
-
-  let startx = 0;
-  let starty = 0;
-  let isDrawing = false;
-  let triangle;
-
-  this.stage.on('mousedown', (e) => {
-    if (!isDrawing) {
-      isDrawing = true;
-      startx = e.evt.offsetX;
-      starty = e.evt.offsetY;
-
-      triangle = new Konva.RegularPolygon({
-        x: startx,
-        y: starty,
+    else if(shapetype==='triangle')
+    {
+      let triangle;
+      triangle = Triangle.drawTriangle({
+        x: this.startx,
+        y: this.starty,
         sides: 3,
         radius: 0,
         fill: this.fill_color,
         strokeWidth : this.stroke_Width,
         stroke :this.stroke_color,
+        draggable:false,
       });
 
       this.layer.add(triangle);
       this.stage.batchDraw();
 
       this.stage.on('mousemove', (e) => {
-        if (isDrawing) {
+        if (this.isDrawing) {
           const side = Math.sqrt(
-            Math.pow(e.evt.offsetX - startx, 2) +
-            Math.pow(e.evt.offsetY - starty, 2)
+            Math.pow(e.evt.offsetX - this.startx, 2) +
+            Math.pow(e.evt.offsetY - this.starty, 2)
           );
 
           // Set the radius of the triangle to determine its size
@@ -327,66 +207,138 @@ drawTriangle() {
         }
       });
 
-      this.stage.on('mouseup', () => {
-        if (isDrawing) {
-          isDrawing = false;
-          this.stage.off('mousemove');
-          this.stage.off('mouseup');
-        }
-      });
     }
-  });
-},
 
-    drawEllipse() {
-      this.stage.off('mousedown');
-      this.stage.off('mousemove');
-      this.stage.off('mouseup');
-  let startx = 0;
-  let starty = 0;
-  let isDrawing = false;
-  let ellipse;
-
-  this.stage.on('mousedown', (e) => {
-    if (!isDrawing) {
-      isDrawing = true;
-      startx = e.evt.offsetX;
-      starty = e.evt.offsetY;
-
-      ellipse = ShapeFactory.createShape('ellipse', {
-        x: startx,
-        y: starty,
+    else if (shapetype==='ellipse')
+    {
+      let ellip;
+      ellip = ellipse.drawellipse({
+        x: this.startx,
+        y: this.starty,
         radiusX: 0,
         radiusY: 0,
         fill: this.fill_color,
         strokeWidth : this.stroke_Width,
         stroke :this.stroke_color,
+        draggable:false,
       });
 
-      this.layer.add(ellipse);
+      this.layer.add(ellip);
       this.stage.batchDraw();
 
       this.stage.on('mousemove', (e) => {
-        if (isDrawing) {
-          const radiusX = Math.abs(e.evt.offsetX - startx);
-          const radiusY = Math.abs(e.evt.offsetY - starty);
+        if (this.isDrawing) {
+          const radiusX = Math.abs(e.evt.offsetX - this.startx);
+          const radiusY = Math.abs(e.evt.offsetY - this.starty);
 
-          ellipse.radiusX(radiusX);
-          ellipse.radiusY(radiusY);
+          ellip.radiusX(radiusX);
+          ellip.radiusY(radiusY);
           this.stage.batchDraw();
         }
       });
 
-      this.stage.on('mouseup', () => {
-        if (isDrawing) {
-          isDrawing = false;
+    }
+    else if (shapetype==='line')
+    {
+      let line;
+      line = Line.drawLine({
+        points: [this.startx, this.starty],
+        stroke: this.stroke_color,
+        strokeWidth: this.stroke_Width,
+        draggable:false,
+      });
+
+      this.layer.add(line);
+      this.stage.batchDraw();
+
+      this.stage.on('mousemove', (e) => {
+        if (this.isDrawing) {
+          const endx = e.evt.offsetX;
+          const endy = e.evt.offsetY;
+          line.points([this.startx, this.starty, endx, endy]);
+          this.stage.batchDraw();
+        }
+      });
+
+    }
+    else if (shapetype==='pencil')
+    {
+      let pos = this.stage.getPointerPosition();
+      let lastLine = Line.drawLine({
+      stroke: this.stroke_color,
+      strokeWidth: this.stroke_Width,
+      lineCap: 'round', 
+      lineJoin: 'round', 
+      points: [pos.x, pos.y],
+      draggable:false,
+    });
+    this.layer.add(lastLine);
+  
+
+  this.stage.on('mousemove touchmove', () => {
+    if (!this.isDrawing) {
+      return;
+    }
+    let pos = this.stage.getPointerPosition();
+    let newPoints = lastLine.points().concat([pos.x, pos.y]);
+    lastLine.points(newPoints);
+    this.layer.batchDraw();
+  });
+    }
+    this.stage.on('mouseup', () => {
+        if (this.isDrawing) {
+          this.isDrawing = false;
           this.stage.off('mousemove');
           this.stage.off('click');
         }
+        if (shapetype === 'circle')
+        {
+          Shape.shapeType = 'circle';
+          Shape.radius = this.circle.radius();
+          Shape.x = this.circle.x();
+          Shape.y = this.circle.y();
+          Shape.fill = this.circle.fill();
+          Shape.strokeColor = this.circle.stroke();
+          Shape.strokeWidth = this.circle.strokeWidth();
+
+        }
+        if (shapetype === 'rectangle')
+        {
+          Shape.shapeType = 'rectangle';
+          Shape.x = this.rec.x();
+          Shape.y = this.rec.y();
+          Shape.fill = this.rec.fill();
+          Shape.strokeColor = this.rec.stroke();
+          Shape.strokeWidth = this.rec.strokeWidth();
+
+        }
+        console.log(Shape);
+        this.stage.off('mouseup');
+
       });
     }
-  });
-},
+      });
+    },
+
+    // Editshape(){
+    // this.stage.off('mousedown');
+    // this.isDragging = true;
+
+    // this.layer.getChildren(node => {
+    //   node.setAttr('draggable', this.isDragging);
+    // });
+
+    // if (!this.isDragging) {
+    //   this.layer.off('mousedown touchstart');
+    //   this.layer.off('mousemove touchmove');
+    //   this.layer.off('mouseup touchend');
+    // }
+
+   
+
+    // },
+  
+
 changeFillColor(event) {
     const gradient = document.querySelector('.gradient');
     const rect = gradient.getBoundingClientRect();
@@ -422,7 +374,7 @@ changeFillColor(event) {
 
   },
   changeStrokewidth(event){
-    this.stroke_Width = event.target.value;
+    this.stroke_Width = parseInt(event.target.value);
   }
   },
   
@@ -522,9 +474,5 @@ changeFillColor(event) {
 .size-picker input{
   width: 95%;
   
-}
-
-
-  
-   
+} 
 </style>
