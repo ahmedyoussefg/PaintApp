@@ -72,9 +72,31 @@ public class Shape implements Cloneable {
         return cloned;
     }
 
-    public ShapeDTO shapeToDTO(){
-        // logic
-        return new ShapeDTO();
+    public ShapeDTO shapeToDTO() {
+        ShapeDTO dto = new ShapeDTO();
+        dto.id = this.id;
+        dto.x = this.position.getX();
+        dto.y = this.position.getY();
+        dto.rotation = this.rotation;
+        dto.strokeWidth = this.stroke_width;
+        dto.fill = this.fill_color;
+        dto.strokeColor = this.stroke_color;
+        if (this instanceof Circle) {
+            Circle circle = (Circle) this;
+            dto.radius = circle.getRadius();
+            dto.shapeType = "circle";
+        } else if (this instanceof Rectangle) {
+            Rectangle rectangle = (Rectangle) this;
+            dto.width = rectangle.getWidth();
+            dto.height = rectangle.getHeight();
+            dto.shapeType = "rectangle";
+        } else if (this instanceof Ellipse) {
+            Ellipse ellipse = (Ellipse) this;
+            dto.radiusX= ellipse.getRadius().getX();
+            dto.radiusY=ellipse.getRadius().getY();
+            dto.shapeType="ellipse";
+        }
+        return dto;
     }
 }
 

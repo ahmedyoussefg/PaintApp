@@ -2,9 +2,7 @@ package com.jetbrains.csed.paint.Actions;
 
 import com.jetbrains.csed.paint.Shapes.Shape;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class DrawingArea {
     private HashMap<Integer, Shape> drawnShapes = new HashMap<>();
@@ -20,7 +18,7 @@ public class DrawingArea {
     public DrawingMemento takeSnapshot(){
         return new DrawingMemento(this.drawnShapes);
     }
-    public void restore(DrawingMemento memento) {
+    public void restoreSnapshot(DrawingMemento memento) {
         this.drawnShapes=memento.getSavedShapes();
     }
     public static class DrawingMemento {
