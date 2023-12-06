@@ -54,6 +54,20 @@ public class Database {
         return cloned;
     }
 
+    public void redo() {
+        if (!redo_stack.empty()) {
+            DrawingArea.DrawingMemento top = redo_stack.pop();
+            undo_stack.push(top);
+            drawingArea.restore(top);
+        }
+    }
+    public void undo(){
+        if(undo_stack.empty())
+            return;
+        DrawingArea.DrawingMemento top= undo_stack.pop();
+        redo_stack.push(top);
+        drawingArea.restore(top);
+    }
     public Shape getShapeByID(int id) {
         return drawingArea.getDrawnShapes().getOrDefault(id, null);
     }

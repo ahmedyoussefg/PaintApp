@@ -21,7 +21,7 @@ public class Controller {
     @PostMapping(value="/copy")
     public ShapeDTO copyShape(ShapeDTO shape_data) throws CloneNotSupportedException {
         Database db = Database.getInstance();
-        Shape copied =db.copy(db.getShapeByID(shape_data.id));
+        Shape copied = db.copy(db.getShapeByID(shape_data.id));
         return copied.shapeToDTO();
     }
 }
