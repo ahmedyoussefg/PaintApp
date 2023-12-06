@@ -8,7 +8,7 @@ public class DrawingArea {
     private HashMap<Integer, Shape> drawnShapes = new HashMap<>();
 
     public void setShapes(HashMap<Integer, Shape> shapes){
-        this.drawnShapes=shapes;
+        this.drawnShapes=new HashMap<>(shapes);
     }
 
     public HashMap<Integer, Shape> getDrawnShapes() {
@@ -16,19 +16,23 @@ public class DrawingArea {
     }
 
     public DrawingMemento takeSnapshot(){
-        return new DrawingMemento(this.drawnShapes);
+        System.out.println("taking snapshot..");
+        return new DrawingMemento(new HashMap<>(this.drawnShapes));
     }
     public void restoreSnapshot(DrawingMemento memento) {
-        this.drawnShapes=memento.getSavedShapes();
+        System.out.println("restoring snapshot");
+        this.drawnShapes=new HashMap<>(memento.getSavedShapes());
     }
     public static class DrawingMemento {
         private final HashMap<Integer, Shape> shapes;
 
         private DrawingMemento(HashMap<Integer, Shape> shapesToSave) {
             this.shapes = shapesToSave;
+            System.out.println("saving snapshot");
         }
 
         private HashMap<Integer, Shape> getSavedShapes() {
+            System.out.println("returning saved shapes");
             return this.shapes;
         }
     }

@@ -21,6 +21,7 @@ public class Database {
         undo_stack = new Stack<>();
         redo_stack = new Stack<>();
         drawingArea = new DrawingArea();
+        this.undo_stack.push(this.drawingArea.takeSnapshot());
     }
     public static Database getInstance() {
         if (database == null) {
@@ -44,7 +45,9 @@ public class Database {
         new_shape.setId(this.id_counter);
         curr.put(this.id_counter++, new_shape);
         drawingArea.setShapes(curr);
+        System.out.println("Drawing");
         this.undo_stack.push(this.drawingArea.takeSnapshot());
+        System.out.println("TAKEN SNAPSHOT COMPLETED");
         this.resetRedoStack();
     }
 
@@ -65,11 +68,13 @@ public class Database {
         }
     }
     public void undo(){
-        if(undo_stack.empty())
+        if(undo_stack.empty() || undo_stack.size() == 1)
             return;
         DrawingArea.DrawingMemento top= undo_stack.pop();
+        System.out.println("popping last undo_stack");
         redo_stack.push(top);
-        drawingArea.restoreSnapshot(top);
+        drawingArea.restoreSnapshot(undo_stack.peek());
+        System.out.println("snapshot restored");
     }
     public Shape getShapeByID(int id) {
         return drawingArea.getDrawnShapes().getOrDefault(id, null);
