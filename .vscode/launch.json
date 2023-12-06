@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-PaintApplication<paint>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.jetbrains.csed.paint.PaintApplication",
+            "projectName": "paint",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
