@@ -16,7 +16,7 @@ import com.jetbrains.csed.paint.Shapes.ShapeDTO;
 @Service
 public class XmlService {
 
-    public String convertToXml(ShapeDTO[] shapes) throws JsonProcessingException {
+    public String convertToXml(ArrayList<ShapeDTO> shapes) throws JsonProcessingException {
         XmlMapper xmlMapper = new XmlMapper();
         return xmlMapper.writeValueAsString(shapes);
     }

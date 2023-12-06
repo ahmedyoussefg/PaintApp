@@ -9,6 +9,7 @@ import com.jetbrains.csed.paint.Shapes.ShapeFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,10 +64,9 @@ public class Controller {
     }
 
     @PostMapping(value="/saveJSON")
-    public ShapeDTO[] saveJSON() {
+    public ArrayList<ShapeDTO> saveJSON() {
         Database db = Database.getInstance();
-        ShapeDTO[] ShapesData = getShapesDTOArray(db.getDrawnShapes());
-        return ShapesData;
+        return db.getDrawnShapesDTOs();
     }
     // @PostMapping(value="/loadJSON")
     // public HashMap<Integer, Shape> loadJSON(@RequestBody HashMap<Integer, Shape> ShapeData) {
@@ -74,19 +74,11 @@ public class Controller {
     //     db.setDrawnShapes(ShapeData);
     //     return db.getDrawnShapes();
     // }
-    ShapeDTO[] getShapesDTOArray(HashMap<Integer, Shape> ShapesData){
-        int NoShapes = ShapesData.size();
-        ShapeDTO[] ShapesDTO = new ShapeDTO[NoShapes];
-        for (int i = 0; i < NoShapes; i++) {
-            ShapesDTO[i] = ShapesData.get(i+1).shapeToDTO();
-        }
-        return ShapesDTO;
-    }
 
     @GetMapping("/saveXML")
     public String getShapesXml() throws JsonProcessingException {
         Database db = Database.getInstance();
-        ShapeDTO[] ShapesData = getShapesDTOArray(db.getDrawnShapes());
+        ArrayList<ShapeDTO> ShapesData = db.getDrawnShapesDTOs();
         return xmlService.convertToXml(ShapesData);
     }
 
@@ -95,6 +87,7 @@ public class Controller {
         System.out.println(xml);
         Database.cleanDatabase();
         ArrayList<ShapeDTO> Shapes = xmlService.convertXmlToShapes(xml);
+
         for (ShapeDTO Shape: Shapes) {
             drawShape(Shape);
         }
