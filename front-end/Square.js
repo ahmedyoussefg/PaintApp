@@ -1,6 +1,6 @@
 import Konva from 'konva';
  class Square{
-    static drawrsquare(properties)
+    static drawsquare(properties)
     {
         return new Konva.Rect(properties);
     }
