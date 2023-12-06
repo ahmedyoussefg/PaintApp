@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8080")
+//@CrossOrigin(origins = "http://localhost:8080" )
+@CrossOrigin(origins = "http://192.168.1.110:8080" )
 public class Controller {
     ShapeFactory factory = new ShapeFactory();
 
@@ -48,11 +49,16 @@ public class Controller {
         db.redo();
         return db.getDrawnShapesDTOs();
     }
-
+    @PostMapping(value="/update")
+    public void updateShape(@RequestBody ShapeDTO data){
+        Database db = Database.getInstance();
+        db.update(db.getShapeByID(data.id));
+    }
     // to see saved shapes
     public void DEBUG(){
         Database db = Database.getInstance();
         HashMap<Integer, Shape> test = db.getDrawnShapes();
+        System.out.println("TEST");
         for (Map.Entry<Integer, Shape> set : test.entrySet()) {
             int saved_id = set.getKey();
             Shape saved_shape = set.getValue();

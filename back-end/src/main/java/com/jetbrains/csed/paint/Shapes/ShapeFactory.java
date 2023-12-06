@@ -11,7 +11,7 @@ public class ShapeFactory {
         else if (data.shapeType.equalsIgnoreCase("circle")) {
             return new Circle(data);
         }
-        else if (data.shapeType.equalsIgnoreCase("rectangle")) {
+        else if (data.shapeType.equalsIgnoreCase("rectangle") ||data.shapeType.equalsIgnoreCase("square") ) {
             return new Rectangle(data);
         }
         else if (data.shapeType.equalsIgnoreCase("triangle")) {
@@ -23,8 +23,8 @@ public class ShapeFactory {
         else if (data.shapeType.equalsIgnoreCase("ellipse")) {
             return new Ellipse(data);
         }
-        else if (data.shapeType.equalsIgnoreCase("square")) {
-            return new Square(data);
+        else if(data.shapeType.equalsIgnoreCase("pencil")){
+            return new Pencil(data);
         }
         return null;
     }

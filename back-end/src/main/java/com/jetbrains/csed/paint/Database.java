@@ -57,6 +57,7 @@ public class Database {
         Point2D.Double new_point = new Point2D.Double(cloned.getPosition().getX()+0.6,cloned.getPosition().getY()+0.6);
         cloned.setPosition(new_point);
         draw(cloned);
+        this.resetRedoStack();
         return cloned;
     }
 
@@ -77,9 +78,26 @@ public class Database {
         System.out.println("snapshot restored");
     }
     public Shape getShapeByID(int id) {
+        System.out.println("Shape ID: "+id);
+        System.out.println("Shapes : "+drawingArea.getDrawnShapes().getOrDefault(id, null));
+
         return drawingArea.getDrawnShapes().getOrDefault(id, null);
     }
 
+    public void update(Shape modified_shape) {
+        HashMap<Integer, Shape> curr=this.drawingArea.getDrawnShapes();
+        System.out.println("CURRBEFORE: "+curr);
+
+        curr.put(modified_shape.getId(), modified_shape);
+        System.out.println("CURRBEFORE: "+curr);
+
+        this.drawingArea.setShapes(curr);
+
+        System.out.println("Updating");
+        this.undo_stack.push(this.drawingArea.takeSnapshot());
+        System.out.println("TAKEN SNAPSHOT COMPLETED");
+        this.resetRedoStack();
+    }
     public ArrayList<ShapeDTO> getDrawnShapesDTOs(){
         HashMap<Integer, Shape> saved_shapes = this.drawingArea.getDrawnShapes();
         ArrayList<ShapeDTO> shapeDTOs = new ArrayList<>();

@@ -11,6 +11,9 @@ public class Shape implements Cloneable {
     private String stroke_color = "black";
     private double rotation;
     private double stroke_width;
+    private double scaleX;
+    private double scaleY;
+
     Shape(){}
 
     Shape(ShapeDTO data) {
@@ -20,6 +23,8 @@ public class Shape implements Cloneable {
         this.rotation=data.rotation;
         this.stroke_color=data.strokeColor;
         this.stroke_width=data.strokeWidth;
+        this.scaleX=data.scaleX;
+        this.scaleY=data.scaleY;
     }
 
     public void setStrokeWidth(double stroke_width) {
@@ -43,6 +48,22 @@ public class Shape implements Cloneable {
     }
     public Point2D.Double getPosition() {
         return this.position;
+    }
+
+    public void setScaleX(double scaleX) {
+        this.scaleX = scaleX;
+    }
+
+    public double getScaleX() {
+        return this.scaleX;
+    }
+
+    public void setScaleY(double scaleY) {
+        this.scaleY = scaleY;
+    }
+
+    public double getScaleY() {
+        return this.scaleY;
     }
 
     public void setPosition(Point2D.Double position) {
@@ -103,16 +124,15 @@ public class Shape implements Cloneable {
             dto.radiusX = triangle.getTriangleRadius();
             dto.shapeType="triangle";
         }
+        else if (this instanceof Pencil) {
+            Pencil pencil = (Pencil) this;
+            dto.points = pencil.points;
+            dto.shapeType="pencil";
+        }
         else if (this instanceof LineSegment){
             LineSegment line = (LineSegment) this;
             dto.points = line.points;
             dto.shapeType="line_segment";
-        }
-        else if (this instanceof Square){
-            Square square = (Square) this;
-            dto.height =square.getSide();
-            dto.width=square.getSide();
-            dto.shapeType="square";
         }
         return dto;
     }
