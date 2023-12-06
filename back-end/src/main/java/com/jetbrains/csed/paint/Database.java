@@ -33,6 +33,9 @@ public class Database {
     public HashMap<Integer, Shape> getDrawnShapes() {
         return this.drawingArea.getDrawnShapes();
     }
+    public static void cleanDatabase(){
+        database = new Database();
+    }
 
     public void resetRedoStack() {
         while (!this.redo_stack.empty()){

@@ -121,7 +121,7 @@ public class Shape implements Cloneable {
         else if (this instanceof Triangle) {
             Triangle triangle = (Triangle) this;
             dto.sides = triangle.getNumberOfSides();
-            dto.radiusX = triangle.getTriangleRadius();
+            dto.radius = triangle.getTriangleRadius();
             dto.shapeType="triangle";
         }
         else if (this instanceof Pencil) {

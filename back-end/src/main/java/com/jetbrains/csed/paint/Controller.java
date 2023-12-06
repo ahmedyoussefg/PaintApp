@@ -1,19 +1,25 @@
 package com.jetbrains.csed.paint;
 
-import com.jetbrains.csed.paint.Shapes.Circle;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.jetbrains.csed.paint.Services.XmlService;
 import com.jetbrains.csed.paint.Shapes.Shape;
 import com.jetbrains.csed.paint.Shapes.ShapeDTO;
 import com.jetbrains.csed.paint.Shapes.ShapeFactory;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import com.jetbrains.csed.paint.Shapes.Circle;
+
 
 @RestController
 //@CrossOrigin(origins = "http://localhost:8080" )
 @CrossOrigin(origins = "http://192.168.1.110:8080" )
 public class Controller {
+    private XmlService xmlService = new XmlService();
     ShapeFactory factory = new ShapeFactory();
 
     @PostMapping(value= "/draw")
@@ -55,6 +61,52 @@ public class Controller {
         Shape new_shape = factory.getShape(data);
         db.update(new_shape);
     }
+
+    @PostMapping(value="/saveJSON")
+    public ShapeDTO[] saveJSON() {
+        Database db = Database.getInstance();
+        ShapeDTO[] ShapesData = getShapesDTOArray(db.getDrawnShapes());
+        return ShapesData;
+    }
+    // @PostMapping(value="/loadJSON")
+    // public HashMap<Integer, Shape> loadJSON(@RequestBody HashMap<Integer, Shape> ShapeData) {
+    //     Database db = Database.getInstance();
+    //     db.setDrawnShapes(ShapeData);
+    //     return db.getDrawnShapes();
+    // }
+    ShapeDTO[] getShapesDTOArray(HashMap<Integer, Shape> ShapesData){
+        int NoShapes = ShapesData.size();
+        ShapeDTO[] ShapesDTO = new ShapeDTO[NoShapes];
+        for (int i = 0; i < NoShapes; i++) {
+            ShapesDTO[i] = ShapesData.get(i+1).shapeToDTO();
+        }
+        return ShapesDTO;
+    }
+
+    @GetMapping("/saveXML")
+    public String getShapesXml() throws JsonProcessingException {
+        Database db = Database.getInstance();
+        ShapeDTO[] ShapesData = getShapesDTOArray(db.getDrawnShapes());
+        return xmlService.convertToXml(ShapesData);
+    }
+
+    @PostMapping("/loadXML")
+    public ArrayList<ShapeDTO> getShapesFromXml(@RequestBody String xml) throws IOException {
+        System.out.println(xml);
+        Database.cleanDatabase();
+        ArrayList<ShapeDTO> Shapes = xmlService.convertXmlToShapes(xml);
+        for (ShapeDTO Shape: Shapes) {
+            drawShape(Shape);
+        }
+        return Shapes;
+    }
+
+
+    @GetMapping("/clean")
+    public void cleanCanvas() {
+        Database.cleanDatabase();
+    }
+    
     // to see saved shapes
     public void DEBUG(){
         Database db = Database.getInstance();
