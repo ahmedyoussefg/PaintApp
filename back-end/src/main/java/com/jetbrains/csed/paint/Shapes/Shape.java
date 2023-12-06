@@ -1,5 +1,6 @@
 package com.jetbrains.csed.paint.Shapes;
 
+import javax.sound.sampled.Line;
 import java.awt.geom.Point2D;
 
 public class Shape implements Cloneable {
@@ -95,6 +96,23 @@ public class Shape implements Cloneable {
             dto.radiusX= ellipse.getRadius().getX();
             dto.radiusY=ellipse.getRadius().getY();
             dto.shapeType="ellipse";
+        }
+        else if (this instanceof Triangle) {
+            Triangle triangle = (Triangle) this;
+            dto.sides = triangle.getNumberOfSides();
+            dto.radiusX = triangle.getTriangleRadius();
+            dto.shapeType="triangle";
+        }
+        else if (this instanceof LineSegment){
+            LineSegment line = (LineSegment) this;
+            dto.points = line.points;
+            dto.shapeType="line_segment";
+        }
+        else if (this instanceof Square){
+            Square square = (Square) this;
+            dto.height =square.getSide();
+            dto.width=square.getSide();
+            dto.shapeType="square";
         }
         return dto;
     }
