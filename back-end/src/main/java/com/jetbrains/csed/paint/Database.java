@@ -86,16 +86,9 @@ public class Database {
 
     public void update(Shape modified_shape) {
         HashMap<Integer, Shape> curr=this.drawingArea.getDrawnShapes();
-        System.out.println("CURRBEFORE: "+curr);
-
         curr.put(modified_shape.getId(), modified_shape);
-        System.out.println("CURRBEFORE: "+curr);
-
         this.drawingArea.setShapes(curr);
-
-        System.out.println("Updating");
         this.undo_stack.push(this.drawingArea.takeSnapshot());
-        System.out.println("TAKEN SNAPSHOT COMPLETED");
         this.resetRedoStack();
     }
     public ArrayList<ShapeDTO> getDrawnShapesDTOs(){

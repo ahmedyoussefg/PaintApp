@@ -52,7 +52,8 @@ public class Controller {
     @PostMapping(value="/update")
     public void updateShape(@RequestBody ShapeDTO data){
         Database db = Database.getInstance();
-        db.update(db.getShapeByID(data.id));
+        Shape new_shape = factory.getShape(data);
+        db.update(new_shape);
     }
     // to see saved shapes
     public void DEBUG(){
