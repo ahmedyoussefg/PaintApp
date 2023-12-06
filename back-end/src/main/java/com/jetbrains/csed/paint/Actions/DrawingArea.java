@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DrawingArea {
-    private HashMap<Integer, Shape> drawnShapes;
+    private HashMap<Integer, Shape> drawnShapes = new HashMap<>();
 
     public void setShapes(HashMap<Integer, Shape> shapes){
         this.drawnShapes=shapes;

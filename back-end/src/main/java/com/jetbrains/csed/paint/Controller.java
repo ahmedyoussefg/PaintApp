@@ -11,7 +11,7 @@ public class Controller {
     ShapeFactory factory = new ShapeFactory();
 
     @PostMapping(value= "/draw")
-    public ShapeDTO drawShape(ShapeDTO shape_data){
+    public ShapeDTO drawShape(@RequestBody ShapeDTO shape_data){
         Database db = Database.getInstance();
         Shape new_shape = factory.getShape(shape_data);
         db.draw(new_shape);
@@ -19,7 +19,7 @@ public class Controller {
     }
 
     @PostMapping(value="/copy")
-    public ShapeDTO copyShape(ShapeDTO shape_data) throws CloneNotSupportedException {
+    public ShapeDTO copyShape(@RequestBody ShapeDTO shape_data) throws CloneNotSupportedException {
         Database db = Database.getInstance();
         Shape copied = db.copy(db.getShapeByID(shape_data.id));
         return copied.shapeToDTO();
