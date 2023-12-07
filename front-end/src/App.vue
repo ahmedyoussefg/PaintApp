@@ -9,7 +9,7 @@
         <div v-if="showModalSave" class="modal">
         <div class="modal-content">
         <h2>Choose File Type</h2>
-        <button >Save as XML</button>
+        <button @click="saveAsXML" >Save as XML</button>
         <button @click="saveAsJSON">Save as JSON</button>
         </div>
         </div>
@@ -17,8 +17,12 @@
          <div v-if="showModalload" class="modal">
         <div class="modal-content">
         <h2>Choose File Type</h2>
-        <button >Load XML File</button>
-        <button @click="saveAsJSON">Load JSON File</button>
+        <!-- <button >Load XML File</button> -->
+        <input ref="fileInputXML" type="file" id="fileInput" @change="loadXML" style="display: none;" />
+        <input ref="fileInputJSON" type="file" id="fileInput" @change="loadJSON" style="display: none;" />
+        <button @click="triggerFileInputXML">Load XML</button>
+
+        <button @click="triggerFileInputJSON">Load JSON File</button>
         </div>
         </div>
 
@@ -55,13 +59,13 @@
 
 <script>
 import Konva from 'konva';
-import Circle from './Circle';
-import rectangle from './rectangle';
-import Square from './Square';
-import Triangle from './Triangle';
-import ellipse   from './ellipse';
-import Line from './Line';
-import ShapeDTO from './ShapeDTO';
+import Circle from '../src/Circle';
+import rectangle from '../src/rectangle';
+import Square from '../src/Square';
+import Triangle from '../src/Triangle';
+import ellipse   from '../src/ellipse';
+import Line from '../src/Line';
+import ShapeDTO from '../src/ShapeDTO';
 import axios from 'axios';
 import { saveAs} from 'file-saver';
 
@@ -106,25 +110,30 @@ export default {
     {
       this.showModalload = true
     },
-    loadJSON()
+    loadJSON(event)
     {
-      // func to load JSON
-      this.showModalload = false
+      this.showModalload = false;
+      this.readFileJSON(event)
     },
 
     Save() {
       this.showModalSave = true;
     },
-    loadJSON(){
-      
+    loadXML(event){
+      this.showModalload = false;
+      this.readFileXML(event);
     },
-     saveAsJSON() {
+    saveAsJSON() {
       this.fetchAndSaveData();
+      this.showModalSave = false;
+    },
+    saveAsXML(){
+      this.fetchAndSaveXml();
       this.showModalSave = false;
     },
     async fetchAndSaveData() {
       try {
-        const response = await axios.get('http://192.168.1.114:8081/saveJSON');
+        const response = await axios.get('http://localhost:8081/saveJSON');
         const jsonData = response.data;
         const jsonString = JSON.stringify(jsonData, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
@@ -134,20 +143,104 @@ export default {
         console.error('Error fetching or saving data:', error);
       }
     },
-    async requestsave()
-    {
-      axios.post('http://192.168.1.114:8081/saveJSON')
-      .then(response => {
-      const jsonData = JSON.stringify(response.data, null, 2);
-      const blob = new Blob([jsonData], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      }) 
+    async fetchAndSaveXml() {
+      try {
+        const response = await axios.get('http://localhost:8081/saveXML', { responseType: 'text' });
+        const xmlString = response.data;
+        const blob = new Blob([xmlString], { type: 'application/xml' });
+        const fileName = 'data.xml';
+        
+        // Trigger the download directly
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+      } catch (error) {
+        console.error('Error fetching or saving XML data:', error);
+      }
     },
+    triggerFileInputXML() {
+      // Trigger a click on the hidden file input
+      this.$refs.fileInputXML.click();
+    },
+    triggerFileInputJSON() {
+      // Trigger a click on the hidden file input
+      this.$refs.fileInputJSON.click();
+    },
+    async requestXMLLoader(shapeData)
+    {
+      console.log(encodeURIComponent(shapeData));
+      axios.post('http://localhost:8081/loadXML', encodeURIComponent(shapeData))
+      .then (response => {
+        this.board = response.data;
+        console.log('Shape saved successfully:',response.data);
+        this.drawBoard(this.board);
+        return this.board;
+      })
+      .catch (error => {
+        console.error('Error saving shape:' , error);
+      });
+    },
+    readFileXML(event) {
+      this.showModalload = false;
+
+      const fileInput = event.target;      
+      if (fileInput.files.length > 0) {
+        const selectedFile = fileInput.files[0];
+
+        const reader = new FileReader();
+
+        reader.onload = event => {
+          const fileContents = event.target.result;
+          this.requestXMLLoader(fileContents);
+          console.log('File contents:', fileContents);
+        };
+        reader.readAsText(selectedFile);
+      } else {
+        console.error('No file selected');
+      }
+    },
+  readFileJSON(event) {
+    console.log("redFile Json INSDE");
+        const fileInput = event.target;
+    if (fileInput.files.length > 0) {
+      const selectedFile = fileInput.files[0];
+
+      const reader = new FileReader();
+
+      reader.onload = event => {
+        const fileContents = event.target.result;
+
+        try {
+          const shapesArray = JSON.parse(fileContents);
+          axios.post('http://localhost:8081/loadJSON',shapesArray)
+          .then (response => {
+            this.board = response.data;
+            this.drawBoard(this.board);
+
+            console.log('Shape saved successfully:',response.data)
+            return this.board;
+          })
+          .catch (error => {
+            console.error('Error saving shape:' , error);
+          });
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+        }
+      };
+      reader.readAsText(selectedFile);
+    } else {
+      console.error('No file selected');
+    }
+  },
     async requestdraw(shapeData)
     {
-      axios.post('http://192.168.1.114:8081/draw',shapeData)
+      axios.post('http://localhost:8081/draw',shapeData)
       .then (response => {
-        this.shapeID=response.data.id;
+        this.shapeID = response.data.id;
         console.log('Shape saved successfully:',response.data)
       })
       .catch (error => {
@@ -155,7 +248,7 @@ export default {
       });
     },
     async requestundo() {
-    return axios.post('http://192.168.1.114:8081/undo') // Returning the promise
+    return axios.post('http://localhost:8081/undo') 
     .then(response => {
       this.board = response.data;
       return this.board; 
@@ -166,7 +259,7 @@ export default {
     });
     },
     async requestredo() {
-      return axios.post('http://192.168.1.114:8081/redo') // Returning the promise
+      return axios.post('http://localhost:8081/redo') // Returning the promise
     .then(response => {
       this.board = response.data;
       return this.board; 
@@ -176,108 +269,135 @@ export default {
       throw error; 
     });
     },
+    // async requestBoard() {
+    //   return axios.post('http://localhost:8081/board') // Returning the promise
+    // .then(response => {
+    //   this.board = response.data;
+    //   return this.board; 
+    // })
+    // .catch(error => {
+    //   console.error('Error receiving shapes', error);
+    //   throw error; 
+    // });
+    // },    
+    // UpdatedBoard() {
+    //   this.requestBoard()
+    //     .then(boardData => {
+    //       console.log(boardData);
+    //       this.drawBoard(boardData); // Call undo() with the updated board data
+    //     })
+    //     .catch(error => {
+    //       // Handle errors if any from the requestundo() function
+    //       console.error('Undo failed:', error);
+    //     });
+    // },
 
-  draw(boardData) {
+
+  drawBoard(boardData){
   this.layer.removeChildren();
+  console.log("Boarddata : ", boardData);
   for (let i = 0; i < boardData.length; i++) {
-
-    switch (boardData[i].shapeType) {
-      case 'circle': {
-        this.circle = Circle.drawcircle({
-          x: boardData[i].x,
-          y: boardData[i].y,
-          radius: boardData[i].radius,
-          fill: boardData[i].fill,
-          strokeWidth: boardData[i].strokeWidth,
-          stroke: boardData[i].strokeColor,
-          draggable: false,
-        });
-       
-        this.layer.add(this.circle);
-        this.stage.batchDraw();
-        break;
-      }
-      case 'rectangle': {
-        this.rec = rectangle.drawrectangle({
-          x: boardData[i].x,
-          y: boardData[i].y,
-          width: boardData[i].width,
-          height: boardData[i].height,
-          fill: boardData[i].fill,
-          strokeWidth : boardData[i].strokeWidth,
-          stroke :boardData[i].strokeColor,
-          draggable:false,
-        });
-        console.log("Test rectangle");
-        console.log(this.rec);
-        
-        this.layer.add(this.rec); 
-        this.stage.batchDraw();
-        break;
-      }
-      case 'triangle':
-      { 
-        this.triangle = Triangle.drawTriangle({
-        x: boardData[i].x,
-        y: boardData[i].y,
-        sides: boardData[i].sides,
-        radius: boardData[i].radius,  
-        radiusX: boardData[i].radiusX,
-        side: boardData[i].side,
-        fill: boardData[i].fill,
-        strokeWidth : boardData[i].strokeWidth,
-        stroke :boardData[i].strokeColor,
+    this.draw(boardData[i]);
+    // this.requestdraw(boardData[i]);
+  }
+  },
+  draw(Shape) {
+  switch (Shape.shapeType) {
+    case 'circle': {
+      this.circle = Circle.drawcircle({
+        x: Shape.x,
+        y: Shape.y,
+        radius: Shape.radius,
+        fill: Shape.fill,
+        strokeWidth: Shape.strokeWidth,
+        stroke: Shape.strokeColor,
+        draggable: false,
+      });
+      
+      this.layer.add(this.circle);
+      this.stage.batchDraw();
+      break;
+    }
+    case 'rectangle': {
+      this.rec = rectangle.drawrectangle({
+        x: Shape.x,
+        y: Shape.y,
+        width: Shape.width,
+        height: Shape.height,
+        fill: Shape.fill,
+        strokeWidth : Shape.strokeWidth,
+        stroke :Shape.strokeColor,
         draggable:false,
       });
-      this.layer.add(this.triangle);
+      console.log("Test rectangle");
+      console.log(this.rec);
+      
+      this.layer.add(this.rec); 
       this.stage.batchDraw();
-        break;
-      }
-      case 'ellipse':{
-        this.ellip = ellipse.drawellipse({
-        x: boardData[i].x,
-        y: boardData[i].y,
-        radiusX: boardData[i].radiusX,
-        radiusY: boardData[i].radiusY,
-        fill: boardData[i].fill,
-        strokeWidth : boardData[i].strokeWidth,
-        stroke :boardData[i].strokeColor,
-        draggable:false,
-      });
-     
-      this.layer.add(this.ellip);
-      this.stage.batchDraw();
-        break;
-      }
-
-      case 'line_segment':{
-        this.line = Line.drawLine({
-        points: boardData[i].points,
-        stroke: boardData[i].strokeColor,
-        strokeWidth: boardData[i].strokeWidth,
-        draggable:false,
-      });
-     
-      this.layer.add(this.line);
-      this.stage.batchDraw();
-
-        break;
-      }
-      case 'pencil':{
-      this.pen = Line.drawLine({
-      stroke: boardData[i].strokeColor,
-      strokeWidth: boardData[i].strokeWidth,
-      lineCap: 'round', 
-      lineJoin: 'round', 
-      points: boardData[i].points,
+      break;
+    }
+    case 'triangle':
+    { 
+      this.triangle = Triangle.drawTriangle({
+      x: Shape.x,
+      y: Shape.y,
+      sides: Shape.sides,
+      radius: Shape.radius,  
+      radiusX: Shape.radiusX,
+      side: Shape.side,
+      fill: Shape.fill,
+      strokeWidth : Shape.strokeWidth,
+      stroke :Shape.strokeColor,
       draggable:false,
     });
-   
+    this.layer.add(this.triangle);
+    this.stage.batchDraw();
+      break;
+    }
+    case 'ellipse':{
+      this.ellip = ellipse.drawellipse({
+      x: Shape.x,
+      y: Shape.y,
+      radiusX: Shape.radiusX,
+      radiusY: Shape.radiusY,
+      fill: Shape.fill,
+      strokeWidth : Shape.strokeWidth,
+      stroke :Shape.strokeColor,
+      draggable:false,
+    });
+    
+    this.layer.add(this.ellip);
+    this.stage.batchDraw();
+      break;
+    }
+
+    case 'line_segment':{
+      this.line = Line.drawLine({
+      points: Shape.points,
+      stroke: Shape.strokeColor,
+      strokeWidth: Shape.strokeWidth,
+      draggable:false,
+    });
+    
+    this.layer.add(this.line);
+    this.stage.batchDraw();
+
+      break;
+    }
+    case 'pencil':{
+    this.pen = Line.drawLine({
+    stroke: Shape.strokeColor,
+    strokeWidth: Shape.strokeWidth,
+    lineCap: 'round', 
+    lineJoin: 'round', 
+    points: Shape.points,
+    draggable:false,
+    });  
     this.layer.add(this.pen);
     this.stage.batchDraw();
-      }
-
+    break;
     }
+
   }
 },
 
@@ -285,7 +405,7 @@ Undo() {
   this.requestundo()
     .then(boardData => {
       console.log(boardData);
-      this.draw(boardData); // Call undo() with the updated board data
+      this.drawBoard(boardData); // Call undo() with the updated board data
     })
     .catch(error => {
       // Handle errors if any from the requestundo() function
@@ -297,7 +417,7 @@ Redo() {
   this.requestredo()
     .then(boardData => {
       console.log(boardData);
-      this.draw(boardData); // Call undo() with the updated board data
+      this.drawBoard(boardData); // Call undo() with the updated board data
     })
     .catch(error => {
       // Handle errors if any from the requestundo() function
