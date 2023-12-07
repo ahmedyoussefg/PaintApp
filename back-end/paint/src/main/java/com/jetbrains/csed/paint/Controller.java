@@ -18,26 +18,27 @@ import com.jetbrains.csed.paint.Shapes.Circle;
 
 @RestController
 //@CrossOrigin(origins = "http://localhost:8080" )
-@CrossOrigin(origins = "http://192.168.1.110:8080" )
+@CrossOrigin(origins = "http://192.168.0.161:8080" )
 public class Controller {
     private XmlService xmlService = new XmlService();
     ShapeFactory factory = new ShapeFactory();
 
     @PostMapping(value= "/draw")
-    public ShapeDTO drawShape(@RequestBody ShapeDTO shape_data){
+    public void drawShape(@RequestBody ShapeDTO shape_data){
         Database db = Database.getInstance();
         Shape new_shape = factory.getShape(shape_data);
         db.draw(new_shape);
-        new_shape.setId(db.getId_counter()-1);
         DEBUG();
-        return new_shape.shapeToDTO();
+        return;
     }
 
     @PostMapping(value="/copy")
-    public ShapeDTO copyShape(@RequestBody ShapeDTO shape_data) throws CloneNotSupportedException {
+    public ShapeDTO copyShape(@RequestBody String[] shapes_old_copy) throws CloneNotSupportedException {
         Database db = Database.getInstance();
-        Shape copied = db.copy(db.getShapeByID(shape_data.id));
+        String shape_id = shapes_old_copy[0];
+        String copied_id=shapes_old_copy[1];
 
+        Shape copied = db.copy(db.getShapeByID(Integer.parseInt(shape_id)), Integer.parseInt(copied_id));
         //DEBUG
         DEBUG();
         return copied.shapeToDTO();
@@ -63,6 +64,12 @@ public class Controller {
         db.update(new_shape);
     }
 
+    @PostMapping(value="/delete")
+    public void deleteShape(@RequestBody String deleted_id) {
+        Database db = Database.getInstance();
+        System.out.println("TODELETE: "+deleted_id);
+        db.delete(Integer.parseInt(deleted_id));
+    }
     @PostMapping(value="/saveJSON")
     public ArrayList<ShapeDTO> saveJSON() {
         Database db = Database.getInstance();

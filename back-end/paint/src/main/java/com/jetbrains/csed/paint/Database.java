@@ -16,7 +16,6 @@ public class Database {
     private DrawingArea drawingArea;
     private Stack<DrawingArea.DrawingMemento> undo_stack;
     private Stack<DrawingArea.DrawingMemento> redo_stack;
-    private int id_counter = 1;
     private Database(){
         undo_stack = new Stack<>();
         redo_stack = new Stack<>();
@@ -45,8 +44,7 @@ public class Database {
 
     public void draw(Shape new_shape) {
         HashMap<Integer, Shape> curr= drawingArea.getDrawnShapes();
-        new_shape.setId(this.id_counter);
-        curr.put(this.id_counter++, new_shape);
+        curr.put(new_shape.getId(), new_shape);
         drawingArea.setShapes(curr);
         System.out.println("Drawing");
         this.undo_stack.push(this.drawingArea.takeSnapshot());
@@ -54,16 +52,27 @@ public class Database {
         this.resetRedoStack();
     }
 
-    public Shape copy(Shape old_version) throws CloneNotSupportedException {
+    public Shape copy(Shape old_version, int copied_id) throws CloneNotSupportedException {
         Shape cloned = old_version.clone();
         // make small offset in x and y of position
-        Point2D.Double new_point = new Point2D.Double(cloned.getPosition().getX()+0.6,cloned.getPosition().getY()+0.6);
+        Point2D.Double new_point = new Point2D.Double(cloned.getPosition().getX()+7,cloned.getPosition().getY()+7);
+
         cloned.setPosition(new_point);
+        cloned.setId(copied_id);
         draw(cloned);
         this.resetRedoStack();
         return cloned;
     }
+    public void delete(int deleted_id){
+        HashMap<Integer, Shape> curr= drawingArea.getDrawnShapes();
 
+        if (curr.containsKey(deleted_id)){
+            curr.remove(deleted_id);
+        }
+        drawingArea.setShapes(curr);
+        this.undo_stack.push(this.drawingArea.takeSnapshot());
+        this.resetRedoStack();
+    }
     public void redo() {
         if (!redo_stack.empty()) {
             DrawingArea.DrawingMemento top = redo_stack.pop();
@@ -104,7 +113,4 @@ public class Database {
         return shapeDTOs;
     }
 
-    public int getId_counter() {
-        return this.id_counter;
-    }
 }
