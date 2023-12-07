@@ -2,66 +2,66 @@
   <div class="main">
     <div class="tools">
       <ul class="shapes">
-         <li><button @click="get_element">Select</button></li>
-         <li><button @click="Undo">Undo</button></li>
-         <li><button @click="Redo">Redo</button></li>
-         <li><button @click="Save">Save</button></li>
+        <li><button @click="hover_element"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'arrow-pointer']" /></span> Select</button></li>
+        <li><button @click="Undo"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'arrow-rotate-left']" /></span> Undo</button></li>
+        <li><button @click="Redo"><span style="font-size:smaller;"><font-awesome-icon :icon="['fas', 'arrow-rotate-right']" /></span> Redo</button></li>
+        <li><button @click="Save"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'floppy-disk']" /></span> Save</button></li>
         <div v-if="showModalSave" class="modal">
-        <div class="modal-content">
-        <h2>Choose File Type</h2>
-        <button >Save as XML</button>
-        <button @click="saveAsJSON">Save as JSON</button>
+          <div class="modal-content">
+            <h2>Choose File Type</h2>
+            <button >Save as XML</button>
+            <button @click="saveAsJSON">Save as JSON</button>
+          </div>
         </div>
-        </div>
-         <li><button @click="Load">Load</button></li>
-         <div v-if="showModalload" class="modal">
-        <div class="modal-content">
-        <h2>Choose File Type</h2>
-        <button >Load XML File</button>
-        <button @click="saveAsJSON">Load JSON File</button>
-        </div>
+        <li><button @click="Load"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'cloud-arrow-up']" /></span> Load</button></li>
+        <div v-if="showModalload" class="modal">
+          <div class="modal-content">
+            <h2>Choose File Type</h2>
+            <button >Load XML File</button>
+            <button @click="saveAsJSON">Load JSON File</button>
+          </div>
         </div>
 
         <li><button @click="drawshape('pencil')"><span>&#9998;</span> Pencil</button></li>
         <li><button @click="drawshape('line')"><span style="font-size: medium;">&#9644; </span> Line</button></li>
-        <li> <button @click="drawshape('circle')"> <span>&#9679; </span> Circle</button></li>
-        <li><button @click="drawshape('rectangle')"><span>&#9644; </span> Rectangle</button></li>
-        <li> <button @click="drawshape('square')"><span> &#9632; </span> Square</button></li>
+        <li><button @click="drawshape('circle')"> <span> &#9679;</span> Circle</button></li>
+        <li><button @click="drawshape('rectangle')"><span>&#9646;</span> Rectangle</button></li>
+        <li><button @click="drawshape('square')"><span> &#9632; </span> Square</button></li>
         <li><button @click="drawshape('triangle')"><span style="font-size: smaller;">&#9650; </span>Triangle</button></li>
-          <li><button class="elip" @click="drawshape('ellipse')"><svg height="20" width="30"><ellipse cx="12" cy="10" rx="10" ry="5"
-              style="display: inline-block; fill:black;" /></svg><span style="font-size: large">Ellipse</span></button></li>
-          <!-- <li><button @click="Editshape"><span>&#128400; </span>Edit</button></li> -->
-
+        <li><button class="elip" @click="drawshape('ellipse')"><span style="font-size: smaller;">&#11052; </span> Ellipse</button></li>
+        <li><button @click="erase"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'eraser']" /></span> Eraser</button></li>
+        <li><button class = "clear" @click="clear"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'broom']" /></span> Clear Canvas</button></li>
       </ul><br>
       <div class="color-picker" @click="changeFillColor($event)">Fill Color 
-    <div class="gradient"></div>
-    </div><br>
-    <div class="color-picker" @click="changeStrokeColor($event)">Stroke Color 
-    <div class="gradient"></div>
-    </div><br>
-    <div class="size-picker" @click="changeStrokewidth($event)">
-  <label style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-weight: bold;" for="shapeSize">Stroke Size</label><br>
-  <input type="range" id="shapeSize" min="1" max="10" v-model="shapeSize" />
-</div>
-
+        <div class="gradient"></div>
+      </div><br>
+      <div class="color-picker" @click="changeStrokeColor($event)">Stroke Color 
+        <div class="gradient"></div>
+      </div><br>
+      <div class="size-picker" @click="changeStrokewidth($event)">
+        <label style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-weight: bold;" for="shapeSize">Stroke Size</label><br>
+        <input type="range" id="shapeSize" min="1" max="10" v-model="shapeSize" />
+      </div>
     </div>
-    
-    
-    <div class="board" ref="stageContainer">
-      
+    <div class="board" ref="stageContainer"></div>
+    <div id="popup" class="overlay" style="position: absolute; display: block; top: 250px; right: 70px;">
+      <ul>
+        <li><button @click="copy_shape"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'copy']" /></span> Copy</button></li>
+        <li><button @click="delete_shape"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'trash-can']" /></span> Delete</button></li>
+      </ul>
     </div>
   </div>
 </template>
 
 <script>
 import Konva from 'konva';
-import Circle from './Circle';
-import rectangle from './rectangle';
-import Square from './Square';
-import Triangle from './Triangle';
-import ellipse   from './ellipse';
-import Line from './Line';
-import ShapeDTO from './ShapeDTO';
+import Circle from '../src/Circle';
+import rectangle from '../src/rectangle';
+import Square from '../src/Square';
+import Triangle from '../src/Triangle';
+import ellipse   from '../src/ellipse';
+import Line from '../src/Line';
+import ShapeDTO from '../src/ShapeDTO';
 import axios from 'axios';
 import { saveAs} from 'file-saver';
 
@@ -83,12 +83,12 @@ export default {
       ellip : null,
       pen : null,
       triangle : null,
-      shapeID:0,
+      shapeID: 1,
       board :[],
       showModalload :false,
-      showModalSave :false
-
-
+      showModalSave :false,
+      shape: null,
+      transformer: null,
     }
   },
   mounted() {
@@ -124,7 +124,7 @@ export default {
     },
     async fetchAndSaveData() {
       try {
-        const response = await axios.get('http://192.168.1.114:8081/saveJSON');
+        const response = await axios.get('http://192.168.0.150:8081/saveJSON');
         const jsonData = response.data;
         const jsonString = JSON.stringify(jsonData, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
@@ -136,7 +136,7 @@ export default {
     },
     async requestsave()
     {
-      axios.post('http://192.168.1.114:8081/saveJSON')
+      axios.post('http://192.168.0.150:8081/saveJSON')
       .then(response => {
       const jsonData = JSON.stringify(response.data, null, 2);
       const blob = new Blob([jsonData], { type: "application/json" });
@@ -145,17 +145,16 @@ export default {
     },
     async requestdraw(shapeData)
     {
-      axios.post('http://192.168.1.114:8081/draw',shapeData)
+      axios.post('http://192.168.0.150:8081/draw',shapeData)
       .then (response => {
-        this.shapeID=response.data.id;
-        console.log('Shape saved successfully:',response.data)
+        console.log('Shape saved successfully:',response.data.id);
       })
       .catch (error => {
         console.error('Error saving shape:' , error);
       });
     },
     async requestundo() {
-    return axios.post('http://192.168.1.114:8081/undo') // Returning the promise
+    return axios.post('http://192.168.0.150:8081/undo') // Returning the promise
     .then(response => {
       this.board = response.data;
       return this.board; 
@@ -166,7 +165,7 @@ export default {
     });
     },
     async requestredo() {
-      return axios.post('http://192.168.1.114:8081/redo') // Returning the promise
+      return axios.post('http://192.168.0.150:8081/redo') // Returning the promise
     .then(response => {
       this.board = response.data;
       return this.board; 
@@ -180,104 +179,7 @@ export default {
   draw(boardData) {
   this.layer.removeChildren();
   for (let i = 0; i < boardData.length; i++) {
-
-    switch (boardData[i].shapeType) {
-      case 'circle': {
-        this.circle = Circle.drawcircle({
-          x: boardData[i].x,
-          y: boardData[i].y,
-          radius: boardData[i].radius,
-          fill: boardData[i].fill,
-          strokeWidth: boardData[i].strokeWidth,
-          stroke: boardData[i].strokeColor,
-          draggable: false,
-        });
-       
-        this.layer.add(this.circle);
-        this.stage.batchDraw();
-        break;
-      }
-      case 'rectangle': {
-        this.rec = rectangle.drawrectangle({
-          x: boardData[i].x,
-          y: boardData[i].y,
-          width: boardData[i].width,
-          height: boardData[i].height,
-          fill: boardData[i].fill,
-          strokeWidth : boardData[i].strokeWidth,
-          stroke :boardData[i].strokeColor,
-          draggable:false,
-        });
-        console.log("Test rectangle");
-        console.log(this.rec);
-        
-        this.layer.add(this.rec); 
-        this.stage.batchDraw();
-        break;
-      }
-      case 'triangle':
-      { 
-        this.triangle = Triangle.drawTriangle({
-        x: boardData[i].x,
-        y: boardData[i].y,
-        sides: boardData[i].sides,
-        radius: boardData[i].radius,  
-        radiusX: boardData[i].radiusX,
-        side: boardData[i].side,
-        fill: boardData[i].fill,
-        strokeWidth : boardData[i].strokeWidth,
-        stroke :boardData[i].strokeColor,
-        draggable:false,
-      });
-      this.layer.add(this.triangle);
-      this.stage.batchDraw();
-        break;
-      }
-      case 'ellipse':{
-        this.ellip = ellipse.drawellipse({
-        x: boardData[i].x,
-        y: boardData[i].y,
-        radiusX: boardData[i].radiusX,
-        radiusY: boardData[i].radiusY,
-        fill: boardData[i].fill,
-        strokeWidth : boardData[i].strokeWidth,
-        stroke :boardData[i].strokeColor,
-        draggable:false,
-      });
-     
-      this.layer.add(this.ellip);
-      this.stage.batchDraw();
-        break;
-      }
-
-      case 'line_segment':{
-        this.line = Line.drawLine({
-        points: boardData[i].points,
-        stroke: boardData[i].strokeColor,
-        strokeWidth: boardData[i].strokeWidth,
-        draggable:false,
-      });
-     
-      this.layer.add(this.line);
-      this.stage.batchDraw();
-
-        break;
-      }
-      case 'pencil':{
-      this.pen = Line.drawLine({
-      stroke: boardData[i].strokeColor,
-      strokeWidth: boardData[i].strokeWidth,
-      lineCap: 'round', 
-      lineJoin: 'round', 
-      points: boardData[i].points,
-      draggable:false,
-    });
-   
-    this.layer.add(this.pen);
-    this.stage.batchDraw();
-      }
-
-    }
+    this.draw_instance(boardData[i]);
   }
 },
 
@@ -305,39 +207,455 @@ Redo() {
     });
   },
 
-    get_element(){
+  draw_instance(shape){
+    switch (shape.shapeType) {
+      case 'circle': {
+        this.circle = Circle.drawcircle({
+          x: shape.x,
+          y: shape.y,
+          radius: shape.radius,
+          fill: shape.fill,
+          strokeWidth: shape.strokeWidth,
+          stroke: shape.strokeColor,
+          draggable: false,
+          id: shape.id.toString()
+        });
+       
+        this.layer.add(this.circle);
+        this.stage.batchDraw();
+        break;
+      }
+      case 'rectangle': {
+        this.rec = rectangle.drawrectangle({
+          x: shape.x,
+          y: shape.y,
+          width: shape.width,
+          height: shape.height,
+          fill: shape.fill,
+          strokeWidth : shape.strokeWidth,
+          stroke :shape.strokeColor,
+          draggable:false,
+          id: shape.id.toString()
+        });
+        console.log("Test rectangle");
+        console.log(this.rec);
+        
+        this.layer.add(this.rec); 
+        this.stage.batchDraw();
+        break;
+      }
+      case 'triangle':
+      { 
+        this.triangle = Triangle.drawTriangle({
+        x: shape.x,
+        y: shape.y,
+        sides: shape.sides,
+        radius: shape.radius,  
+        radiusX: shape.radiusX,
+        side: shape.side,
+        fill: shape.fill,
+        strokeWidth : shape.strokeWidth,
+        stroke :shape.strokeColor,
+        draggable:false,
+        id: shape.id.toString()
+      });
+      this.layer.add(this.triangle);
+      this.stage.batchDraw();
+        break;
+      }
+      case 'ellipse':{
+        this.ellip = ellipse.drawellipse({
+        x: shape.x,
+        y: shape.y,
+        radiusX: shape.radiusX,
+        radiusY: shape.radiusY,
+        fill: shape.fill,
+        strokeWidth : shape.strokeWidth,
+        stroke :shape.strokeColor,
+        draggable:false,
+        id: shape.id.toString()
+      });
+     
+      this.layer.add(this.ellip);
+      this.stage.batchDraw();
+        break;
+      }
+
+      case 'line_segment':{
+        this.line = Line.drawLine({
+        points: shape.points,
+        stroke: shape.strokeColor,
+        strokeWidth: shape.strokeWidth,
+        draggable:false,
+        id: shape.id.toString()
+      });
+     
+      this.layer.add(this.line);
+      this.stage.batchDraw();
+
+        break;
+      }
+      case 'pencil':{
+      this.pen = Line.drawLine({
+      stroke: shape.strokeColor,
+      strokeWidth: shape.strokeWidth,
+      lineCap: 'round', 
+      lineJoin: 'round', 
+      points: shape.points,
+      draggable:false,
+      id: shape.id.toString()
+    });
+   
+    this.layer.add(this.pen);
+    this.stage.batchDraw();
+      }
+    }
+  },
+
+
+  hover_element(){
+      this.stage.off('mouseover');
+      this.stage.off('mousedown');
+      this.stage.off('mousemove');
+      this.stage.off('mouseup');
+      this.stage.off('mouseout'); 
+      this.stage.off('click');
+
+
+      let original_color;
+      let original_stroke;
+      
+      this.stage.on('click', (e) => {
+        const clickedShape = e.target;
+        if(clickedShape !== this.stage){
+          if (this.transformer) {
+              if(clickedShape instanceof Konva.Shape){
+                this.transformer.nodes([clickedShape]);
+                //this.transformer.moveToTop();
+              }else{
+                this.transformer.destroy();
+              }
+          }
+
+          if (clickedShape instanceof Konva.Shape) {
+              if (!this.transformer) {
+                  this.transformer = new Konva.Transformer({
+                      nodes: [clickedShape],
+                      centeredScaling: true,
+                  });
+                  this.layer.add(this.transformer);
+              }
+          }
+        }else{
+          if(this.transformer){
+            this.transformer.nodes([]);
+          }
+        }
+      });
+
       this.stage.on('mouseover', (e) => {
-        const shape = e.target;
-        if(shape instanceof Konva.Shape){
-          shape.fill('red');
-          shape.shadowColor('black');
-          shape.shadowBlur(10);
-          shape.shadowOffset({ x: 5, y: 5 });
-          shape.shadowOpacity(0.7);
-          console.log('Hovered Shape ID:', this.shapeID);
-          console.log(shape);
+        this.shape = e.target;
+        if(this.shape instanceof Konva.Shape){
+          // Change Color
+          original_color = this.shape.fill();
+          original_stroke = this.shape.getStroke();
+
+          console.log(this.shape.id());
+          if(original_color !== '#FF0C59'){
+            this.shape.fill('#FF0C59');
+          }
+          else{
+            this.shape.fill('red');
+          }
+
+          if(original_stroke !== '#43FFF9'){
+            this.shape.setStroke('#43FFF9');
+          }
+          else{
+            this.shape.setStroke('#49FF43')
+          }
+          // Add Shadow
+          this.shape.shadowColor('black');
+          this.shape.shadowBlur(10);
+          this.shape.shadowOffset({ x: 8, y: 8  });
+          this.shape.shadowOpacity(0.7);
+          
+          document.body.style.cursor = 'move';
+          this.shape.draggable(true);
+
           this.layer.batchDraw();
         }
       });
 
       this.stage.on('mouseout', (e) => {
-        const shape = e.target;
-        if(shape instanceof Konva.Shape){
-          shape.fill('aliceblue');
-          shape.shadowOpacity(0);
+        this.shape = e.target;
+
+        if(this.shape instanceof Konva.Shape){
+          document.body.style.cursor = 'default';
+          this.shape.draggable(false);
+          //Return Color
+          this.shape.fill(original_color);
+          this.shape.setStroke(original_stroke);
+          //Remove Shadow
+          this.shape.shadowOpacity(0);
+          this.layer.draw();
+        }
+      });
+    },
+
+    clear(){
+      this.stage.destroyChildren();
+      this.stage.draw();
+      
+      this.stage = new Konva.Stage({
+        container: this.$refs.stageContainer,
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+      this.layer = new Konva.Layer();
+      this.stage.add(this.layer);
+    },
+
+    ////////////////////////////////
+    erase(){
+      this.fill_color = "aliceblue";
+      this.usePencilTool();
+    },
+
+    //////////////////////////////
+    fill_shape(){
+      this.stage.off('mouseover');
+      this.stage.off('mousedown');
+      this.stage.off('mousemove');
+      this.stage.off('mouseup');
+      this.stage.off('mouseout');
+      
+      let original_color;
+
+      this.stage.on('mouseover', (e) => {
+        this.shape = e.target;
+        if(this.shape instanceof Konva.Shape){
+          // Change Color
+          document.body.style.cursor = 'not-allowed';
+          original_color = this.shape.fill();
+          if(original_color !== '#FF0C59'){
+            this.shape.fill('#FF0C59');
+          }
+          else{
+            this.shape.fill('white');
+          }
+          // Add Shadow
+          this.shape.shadowColor('black');
+          this.shape.shadowBlur(10);
+          this.shape.shadowOffset({ x: 8, y: 8  });
+          this.shape.shadowOpacity(0.7);
+          
+          //Fill shape on Click
+          this.shape.on('click', ()=>{
+            this.shape.destroy(); 
+            document.body.style.cursor = 'default';
+          })
           this.layer.batchDraw();
         }
       });
-    
-  },
+
+      this.stage.on('mouseout', (e) => {
+        document.body.style.cursor = 'default';
+        if(this.shape instanceof Konva.Shape){
+          this.shape.fill(original_color);
+        }
+      })
+    },
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    async requestcopy(shapeid)
+    {
+      axios.post('http://192.168.0.150:8081/copy',[shapeid, this.shapeID.toString()])
+      .then (response => {
+        this.shapeID++;
+        console.log('Shape copied successfully:',response.data),
+        console.log('shapeID', this.shapeID.toString());
+        console.log('Id of copied shape', shapeid);
+        this.draw_instance(response.data);
+        return response.data;
+      })
+      .catch (error => {
+        console.error('Error copying shape:' , error);
+      });
+    },
+
+    copy_shape(){
+      this.stage.off('mouseover');
+      this.stage.off('mousedown');
+      this.stage.off('mousemove');
+      this.stage.off('mouseup');
+      this.stage.off('mouseout');
+      this.stage.off('click');
+
+      let copiedShape = null;
+      let original_color;
+      let original_stroke;
+
+      
+      this.stage.on('mouseover', (e) => {
+        this.shape = e.target;
+        if(this.shape instanceof Konva.Shape){
+          // Change Color
+          document.body.style.cursor = 'grab';
+          original_color = this.shape.fill();
+          original_stroke = this.shape.getStroke();
+
+          if(original_color !== '#FF0C59'){
+            this.shape.fill('#FF0C59');
+          }
+          else{
+            this.shape.fill('red');
+          }
+
+          if(original_stroke !== '#43FFF9'){
+            this.shape.setStroke('#43FFF9');
+          }
+          else{
+            this.shape.getStroke('#49FF43')
+          }
+
+          // Add Shadow
+          this.shape.shadowColor('black');
+          this.shape.shadowBlur(10);
+          this.shape.shadowOffset({ x: 8, y: 8  });
+          this.shape.shadowOpacity(0.7);
+          
+          this.layer.batchDraw();
+          if(copiedShape !== null)
+            this.draw_instance(copiedShape);
+        }
+      });
+
+      this.stage.on('mouseout', (e) => {
+        document.body.style.cursor = 'default';
+        if(this.shape instanceof Konva.Shape){
+          this.shape.fill(original_color);
+          this.shape.setStroke(original_stroke);
+          this.shape.shadowOpacity(0)
+        }
+      });
+
+      //Copy Shape On click
+      if(this.shape){
+        this.shape.on('click', ()=>{
+          //if(this.transformer){
+            //console.log("IF");
+            //console.log("Shape ID:  SSS ", this.shape.id());
+            //copiedShape = this.requestcopy(this.shape.id());
+            //this.transformer.destroy();
+            //this.transformer = null;
+            //document.body.style.cursor = 'default';
+          //}
+          //else{
+            console.log("Shape", this.shape.id());
+            //console.log("ELSE");
+            copiedShape = this.requestcopy(this.shape.id());
+            document.body.style.cursor = 'default';
+          //}
+        });
+      }
+    },
+
+    async requestdelete(shapeid){
+      axios.post('http://192.168.0.150:8081/delete',shapeid)
+      .then (response => {
+        console.log(shapeid);
+        console.log('Shape deleted successfully:',response.data),
+        console.log('shapeID', this.shapeID.toString());
+        console.log('Id of Deleted shape', shapeid);
+      })
+      .catch (error => {
+        console.error('Error deleting shape:' , error);
+      });
+    },
+
+    delete_shape(){
+      this.stage.off('mouseover');
+      this.stage.off('mousedown');
+      this.stage.off('mousemove');
+      this.stage.off('mouseup');
+      this.stage.off('mouseout');
+      this.stage.off('click');
+
+      let original_color;
+      let original_stroke;
+
+      this.stage.on('mouseover', (e) => {
+        this.shape = e.target;
+        if(this.shape instanceof Konva.Shape){
+          // Change Color
+          document.body.style.cursor = 'not-allowed';
+          original_color = this.shape.fill();
+          original_stroke = this.shape.getStroke();
+
+          if(original_color !== '#FF0C59'){
+            this.shape.fill('#FF0C59');
+          }
+          else{
+            this.shape.fill('red');
+          }
+
+          if(original_stroke !== '#43FFF9'){
+            this.shape.setStroke('#43FFF9');
+          }
+          else{
+            this.shape.getStroke('#49FF43')
+          }
+
+          // Add Shadow
+          this.shape.shadowColor('black');
+          this.shape.shadowBlur(10);
+          this.shape.shadowOffset({ x: 8, y: 8  });
+          this.shape.shadowOpacity(0.7);
+          
+          this.layer.batchDraw();
+        }
+      });
+
+      this.stage.on('mouseout', (e) => {
+        document.body.style.cursor = 'default';
+        if(this.shape instanceof Konva.Shape){
+          this.shape.fill(original_color);
+          this.shape.setStroke(original_stroke);
+        }
+      });
+
+      //Delete Shape On click
+      if(this.shapeID > 1){
+        this.shape.on('click', ()=>{
+          if(this.transformer){
+            console.log("IF Deleting");
+            console.log(this.shape.id);
+            this.requestdelete(this.shape.id);
+            this.shape.destroy();
+            this.transformer.destroy();
+            this.transformer = null;
+            document.body.style.cursor = 'default';
+          }
+          else{
+            console.log("Else Deleting");
+            this.requestdelete(this.shape.id);
+            this.shape.destroy();
+            document.body.style.cursor = 'default';
+          }
+        });
+      }
+    },
+
     drawshape(shapetype)
     {
       let Shape = new ShapeDTO();
       this.stage.off('mousedown');
       this.stage.off('mousemove');
       this.stage.off('mouseup');
-      this.stage.off('mouseout')
-      this.stage.off('mouseover')
+      this.stage.off('mouseout');
+      this.stage.off('mouseover');
+      this.stage.off('click');
+
       this.stage.on('mousedown', (e) => {
       if (!this.isDrawing) {
       this.isDrawing = true;
@@ -353,8 +671,9 @@ Redo() {
         strokeWidth: this.stroke_Width,
         stroke : this.stroke_color,
         draggable:false,
+        id: this.shapeID.toString()
       });
-      this.shapeID++;
+
       this.layer.add(this.circle);
       this.stage.batchDraw();
       
@@ -381,10 +700,13 @@ Redo() {
           strokeWidth : this.stroke_Width,
           stroke :this.stroke_color,
           draggable:false,
+          id: this.shapeID.toString()
         });
-      this.shapeID++;
+
+
       this.layer.add(this.rec);
       this.stage.batchDraw();
+
       this.stage.on('mousemove', (e) => {
         if (this.isDrawing) {
           const width = e.evt.offsetX - this.startx;
@@ -408,8 +730,8 @@ Redo() {
         strokeWidth : this.stroke_Width,
         stroke :this.stroke_color,
         draggable:false,
+        id: this.shapeID.toString()
       });
-      this.shapeID++;
       this.layer.add(this.sq);
       this.stage.batchDraw();
 
@@ -438,8 +760,8 @@ Redo() {
         strokeWidth : this.stroke_Width,
         stroke :this.stroke_color,
         draggable:false,
+        id: this.shapeID.toString()
       });
-      this.shapeID++;
       this.layer.add(this.triangle);
       this.stage.batchDraw();
 
@@ -469,8 +791,8 @@ Redo() {
         strokeWidth : this.stroke_Width,
         stroke :this.stroke_color,
         draggable:false,
+        id: this.shapeID.toString()
       });
-      this.shapeID++;
       this.layer.add(this.ellip);
       this.stage.batchDraw();
 
@@ -493,8 +815,8 @@ Redo() {
         stroke: this.stroke_color,
         strokeWidth: this.stroke_Width,
         draggable:false,
+        id: this.shapeID.toString()
       });
-      this.shapeID++;
       this.layer.add(this.line);
       this.stage.batchDraw();
 
@@ -518,8 +840,8 @@ Redo() {
       lineJoin: 'round', 
       points: [pos.x, pos.y],
       draggable:false,
+      id: this.shapeID.toString()
     });
-    this.shapeID++;
     this.layer.add(this.pen);
     this.stage.batchDraw();
   
@@ -552,7 +874,6 @@ Redo() {
           Shape.strokeColor = this.circle.stroke();
           Shape.strokeWidth = this.circle.strokeWidth();
           Shape.id = this.shapeID;
-    
         }
         if (shapetype === 'rectangle')
         {
@@ -635,38 +956,14 @@ Redo() {
           Shape.strokeColor = this.pen.stroke();
           Shape.strokeWidth = this.pen.strokeWidth();
           Shape.id = this.shapeID;
-    
-        }
-        
-
-
-        this.requestdraw(Shape);
+      }
+        this.requestdraw(Shape); 
         this.stage.off('mouseup');
-
+        this.shapeID++;
       });
     }
       });
     },
-
-    // Editshape(){
-    // this.stage.off('mousedown');
-    // this.isDragging = true;
-
-    // this.layer.getChildren(node => {
-    //   node.setAttr('draggable', this.isDragging);
-    // });
-
-    // if (!this.isDragging) {
-    //   this.layer.off('mousedown touchstart');
-    //   this.layer.off('mousemove touchmove');
-    //   this.layer.off('mouseup touchend');
-    // }
-
-   
-
-    // },
-  
-
 changeFillColor(event) {
     const gradient = document.querySelector('.gradient');
     const rect = gradient.getBoundingClientRect();
