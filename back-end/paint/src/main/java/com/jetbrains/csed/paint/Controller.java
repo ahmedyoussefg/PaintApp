@@ -17,8 +17,8 @@ import com.jetbrains.csed.paint.Shapes.Circle;
 
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:8080" )
-@CrossOrigin(origins = "http://192.168.0.161:8080" )
+@CrossOrigin(origins = "http://localhost:8080" )
+//@CrossOrigin(origins = "http://192.168.0.161:8080" )
 public class Controller {
     private XmlService xmlService = new XmlService();
     ShapeFactory factory = new ShapeFactory();
