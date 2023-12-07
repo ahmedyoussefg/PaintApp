@@ -2,10 +2,10 @@
   <div class="main">
     <div class="tools">
       <ul class="shapes">
-        <li><button @click="hover_element"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'arrow-pointer']" /></span> Select</button></li>
-        <li><button @click="Undo"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'arrow-rotate-left']" /></span> Undo</button></li>
-        <li><button @click="Redo"><span style="font-size:smaller;"><font-awesome-icon :icon="['fas', 'arrow-rotate-right']" /></span> Redo</button></li>
-        <li><button @click="Save"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'floppy-disk']" /></span> Save</button></li>
+        <li><button @click="hover_element(); reset_selection()"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'arrow-pointer']" /></span> Select</button></li>
+        <li><button @click="Undo(); reset_selection()"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'arrow-rotate-left']" /></span> Undo</button></li>
+        <li><button @click="Redo(); reset_selection()"><span style="font-size:smaller;"><font-awesome-icon :icon="['fas', 'arrow-rotate-right']" /></span> Redo</button></li>
+        <li><button @click="Save(); reset_selection()"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'floppy-disk']" /></span> Save</button></li>
         <div v-if="showModalSave" class="modal">
           <div class="modal-content">
             <h2>Choose File Type</h2>
@@ -13,7 +13,7 @@
             <button @click="saveAsJSON">Save as JSON</button>
           </div>
         </div>
-        <li><button @click="Load"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'cloud-arrow-up']" /></span> Load</button></li>
+        <li><button @click="Load(); reset_selection()"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'cloud-arrow-up']" /></span> Load</button></li>
         <div v-if="showModalload" class="modal">
           <div class="modal-content">
             <h2>Choose File Type</h2>
@@ -22,23 +22,23 @@
           </div>
         </div>
 
-        <li><button @click="drawshape('pencil')"><span>&#9998;</span> Pencil</button></li>
-        <li><button @click="drawshape('line')"><span style="font-size: medium;">&#9644; </span> Line</button></li>
-        <li><button @click="drawshape('circle')"> <span> &#9679;</span> Circle</button></li>
-        <li><button @click="drawshape('rectangle')"><span>&#9646;</span> Rectangle</button></li>
-        <li><button @click="drawshape('square')"><span> &#9632; </span> Square</button></li>
-        <li><button @click="drawshape('triangle')"><span style="font-size: smaller;">&#9650; </span>Triangle</button></li>
-        <li><button class="elip" @click="drawshape('ellipse')"><span style="font-size: smaller;">&#11052; </span> Ellipse</button></li>
-        <li><button @click="erase"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'eraser']" /></span> Eraser</button></li>
-        <li><button class = "clear" @click="clear"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'broom']" /></span> Clear Canvas</button></li>
+        <li><button @click="drawshape('pencil'); reset_selection()"><span>&#9998;</span> Pencil</button></li>
+        <li><button @click="drawshape('line'); reset_selection()"><span style="font-size: medium;">&#9644; </span> Line</button></li>
+        <li><button @click="drawshape('circle'); reset_selection()"> <span> &#9679;</span> Circle</button></li>
+        <li><button @click="drawshape('rectangle'); reset_selection()"><span>&#9646;</span> Rectangle</button></li>
+        <li><button @click="drawshape('square'); reset_selection()"><span> &#9632; </span> Square</button></li>
+        <li><button @click="drawshape('triangle'); reset_selection()"><span style="font-size: smaller;">&#9650; </span>Triangle</button></li>
+        <li><button class="elip" @click="drawshape('ellipse'); reset_selection()"><span style="font-size: smaller;">&#11052; </span> Ellipse</button></li>
+        <li><button @click="erase(); reset_selection()"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'eraser']" /></span> Eraser</button></li>
+        <li><button class = "clear" @click="clear(); reset_selection()"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'broom']" /></span> Clear Canvas</button></li>
       </ul><br>
-      <div class="color-picker" @click="changeFillColor($event)">Fill Color 
+      <div class="color-picker" @click="changeFillColor($event); reset_selection()">Fill Color 
         <div class="gradient"></div>
       </div><br>
-      <div class="color-picker" @click="changeStrokeColor($event)">Stroke Color 
+      <div class="color-picker" @click="changeStrokeColor($event); reset_selection()">Stroke Color 
         <div class="gradient"></div>
       </div><br>
-      <div class="size-picker" @click="changeStrokewidth($event)">
+      <div class="size-picker" @click="changeStrokewidth($event); reset_selection()">
         <label style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-weight: bold;" for="shapeSize">Stroke Size</label><br>
         <input type="range" id="shapeSize" min="1" max="10" v-model="shapeSize" />
       </div>
@@ -46,8 +46,8 @@
     <div class="board" ref="stageContainer"></div>
     <div id="popup" class="overlay" style="position: absolute; display: block; top: 250px; right: 70px;">
       <ul>
-        <li><button @click="copy_shape"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'copy']" /></span> Copy</button></li>
-        <li><button @click="delete_shape"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'trash-can']" /></span> Delete</button></li>
+        <li><button @click="copy_shape(); reset_selection()"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'copy']" /></span> Copy</button></li>
+        <li><button @click="delete_shape(); reset_selection()"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'trash-can']" /></span> Delete</button></li>
       </ul>
     </div>
   </div>
@@ -124,7 +124,7 @@ export default {
     },
     async fetchAndSaveData() {
       try {
-        const response = await axios.get('http://192.168.0.150:8081/saveJSON');
+        const response = await axios.get('http://localhost:8081/saveJSON');
         const jsonData = response.data;
         const jsonString = JSON.stringify(jsonData, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
@@ -136,7 +136,7 @@ export default {
     },
     async requestsave()
     {
-      axios.post('http://192.168.0.150:8081/saveJSON')
+      axios.post('http://localhost:8081/saveJSON')
       .then(response => {
       const jsonData = JSON.stringify(response.data, null, 2);
       const blob = new Blob([jsonData], { type: "application/json" });
@@ -145,7 +145,7 @@ export default {
     },
     async requestdraw(shapeData)
     {
-      axios.post('http://192.168.0.150:8081/draw',shapeData)
+      axios.post('http://localhost:8081/draw',shapeData)
       .then (response => {
         console.log('Shape saved successfully:',response.data.id);
       })
@@ -154,7 +154,7 @@ export default {
       });
     },
     async requestundo() {
-    return axios.post('http://192.168.0.150:8081/undo') // Returning the promise
+    return axios.post('http://localhost:8081/undo') // Returning the promise
     .then(response => {
       this.board = response.data;
       return this.board; 
@@ -165,7 +165,7 @@ export default {
     });
     },
     async requestredo() {
-      return axios.post('http://192.168.0.150:8081/redo') // Returning the promise
+      return axios.post('http://localhost:8081/redo') // Returning the promise
     .then(response => {
       this.board = response.data;
       return this.board; 
@@ -325,30 +325,36 @@ Redo() {
       let original_color;
       let original_stroke;
       
+      
       this.stage.on('click', (e) => {
         const clickedShape = e.target;
         if(clickedShape !== this.stage){
-          if (this.transformer) {
+          if (this.transformer){
               if(clickedShape instanceof Konva.Shape){
                 this.transformer.nodes([clickedShape]);
-                //this.transformer.moveToTop();
-              }else{
-                this.transformer.destroy();
+                console.log("Hello from existing transformer");
               }
-          }
-
-          if (clickedShape instanceof Konva.Shape) {
-              if (!this.transformer) {
-                  this.transformer = new Konva.Transformer({
-                      nodes: [clickedShape],
-                      centeredScaling: true,
-                  });
-                  this.layer.add(this.transformer);
-              }
+          }else{
+            if(clickedShape instanceof Konva.Shape){
+              this.transformer = new Konva.Transformer({
+                  nodes: [clickedShape],
+                  centeredScaling: true,
+              });
+              //this.transformer.moveToTop();
+              console.log("Hello from creating transformer");
+              this.layer.add(this.transformer);
+            }
           }
         }else{
           if(this.transformer){
-            this.transformer.nodes([]);
+            console.log("Hiding Transformer from stage");
+            this.transformer.destroy();
+            this.transformer = new Konva.Transformer({
+                  nodes: [],
+                  centeredScaling: true,
+            });
+            //this.transformer.moveToTop();
+            this.layer.add(this.transformer);
           }
         }
       });
@@ -466,10 +472,17 @@ Redo() {
         }
       })
     },
+
+    reset_selection(){
+      if(this.transformer){
+        this.transformer.destroy();
+      }
+      this.transformer = null;
+    },
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     async requestcopy(shapeid)
     {
-      axios.post('http://192.168.0.150:8081/copy',[shapeid, this.shapeID.toString()])
+      axios.post('http://localhost:8081/copy',[shapeid, this.shapeID.toString()])
       .then (response => {
         this.shapeID++;
         console.log('Shape copied successfully:',response.data),
@@ -561,7 +574,7 @@ Redo() {
     },
 
     async requestdelete(shapeid){
-      axios.post('http://192.168.0.150:8081/delete',shapeid)
+      axios.post('http://localhost:8081/delete',shapeid)
       .then (response => {
         console.log(shapeid);
         console.log('Shape deleted successfully:',response.data),
@@ -625,12 +638,12 @@ Redo() {
       });
 
       //Delete Shape On click
-      if(this.shapeID > 1){
+      if(this.shape instanceof Konva.Shape){
         this.shape.on('click', ()=>{
           if(this.transformer){
             console.log("IF Deleting");
             console.log(this.shape.id);
-            this.requestdelete(this.shape.id);
+            this.requestdelete(this.shape.id());
             this.shape.destroy();
             this.transformer.destroy();
             this.transformer = null;
@@ -638,7 +651,7 @@ Redo() {
           }
           else{
             console.log("Else Deleting");
-            this.requestdelete(this.shape.id);
+            this.requestdelete(this.shape.id());
             this.shape.destroy();
             document.body.style.cursor = 'default';
           }
