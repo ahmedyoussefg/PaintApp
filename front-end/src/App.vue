@@ -321,7 +321,6 @@ Redo() {
       this.stage.off('mouseout'); 
       this.stage.off('click');
 
-
       let original_color;
       let original_stroke;
       
@@ -329,6 +328,7 @@ Redo() {
       this.stage.on('click', (e) => {
         const clickedShape = e.target;
         if(clickedShape !== this.stage){
+          this.shape = clickedShape;
           if (this.transformer){
               if(clickedShape instanceof Konva.Shape){
                 this.transformer.nodes([clickedShape]);
@@ -597,6 +597,20 @@ Redo() {
       let original_color;
       let original_stroke;
 
+      //Delete Shape On-Click
+      this.stage.on('click', (e)=>{
+        //const clickedShape = e.target;
+        if(this.shape !== this.stage){
+          if(this.shape instanceof Konva.Shape){
+            //this.shape = clickedShape;
+            this.requestdelete(this.shape.id());
+            this.shape.destroy();
+            document.body.style.cursor = 'default';
+            this.layer.batchDraw();
+          }
+        }
+      });
+
       this.stage.on('mouseover', (e) => {
         this.shape = e.target;
         if(this.shape instanceof Konva.Shape){
@@ -637,26 +651,6 @@ Redo() {
         }
       });
 
-      //Delete Shape On click
-      if(this.shape instanceof Konva.Shape){
-        this.shape.on('click', ()=>{
-          if(this.transformer){
-            console.log("IF Deleting");
-            console.log(this.shape.id);
-            this.requestdelete(this.shape.id());
-            this.shape.destroy();
-            this.transformer.destroy();
-            this.transformer = null;
-            document.body.style.cursor = 'default';
-          }
-          else{
-            console.log("Else Deleting");
-            this.requestdelete(this.shape.id());
-            this.shape.destroy();
-            document.body.style.cursor = 'default';
-          }
-        });
-      }
     },
 
     drawshape(shapetype)
