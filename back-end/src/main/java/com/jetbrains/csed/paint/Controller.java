@@ -52,6 +52,7 @@ public class Controller {
     public ArrayList<ShapeDTO> undo(){
         Database db = Database.getInstance();
         db.undo();
+        DEBUG();
         return db.getDrawnShapesDTOs();
     }
 
@@ -59,11 +60,13 @@ public class Controller {
     public ArrayList<ShapeDTO> redo(){
         Database db = Database.getInstance();
         db.redo();
+        DEBUG();
         return db.getDrawnShapesDTOs();
     }
     @PostMapping(value="/update")
     public void updateShape(@RequestBody ShapeDTO data){
         Database db = Database.getInstance();
+        System.out.println(data.scaleX +","+data.scaleY);
         Shape new_shape = factory.getShape(data);
         System.out.println("CALLED UPDATE");
         db.update(new_shape);
@@ -122,7 +125,7 @@ public class Controller {
             int saved_id = set.getKey();
             Shape saved_shape = set.getValue();
             System.out.println("SAVED ID = "+ saved_id);
-            System.out.printf("x: %f, y: %f, id: %d", saved_shape.getPosition().getX(), saved_shape.getPosition().getY(), saved_shape.getId() );
+            System.out.printf("x: %f, y: %f, id: %d %f", saved_shape.getPosition().getX(), saved_shape.getPosition().getY(), saved_shape.getId(), saved_shape.getRotation() );
 
             System.out.println("_________________________________________");
         }

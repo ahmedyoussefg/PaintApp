@@ -7,8 +7,8 @@ public class ShapeDTO {
     public double x;
     public double y;
     public double radius; // for circle
-    double scaleX;
-    double scaleY;
+    public double scaleX;
+    public double scaleY;
 
     //for ellipse
     public double radiusX;
