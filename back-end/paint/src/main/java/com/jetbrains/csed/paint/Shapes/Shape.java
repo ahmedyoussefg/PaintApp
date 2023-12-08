@@ -13,7 +13,8 @@ public class Shape implements Cloneable {
     private double stroke_width;
     private double scaleX;
     private double scaleY;
-
+    private double offsetX;
+    private double offsetY;
     Shape(){}
 
     Shape(ShapeDTO data) {
@@ -25,6 +26,8 @@ public class Shape implements Cloneable {
         this.stroke_width=data.strokeWidth;
         this.scaleX=data.scaleX;
         this.scaleY=data.scaleY;
+        this.offsetX=data.offsetX;
+        this.offsetY=data.offsetY;
     }
 
     public void setStrokeWidth(double stroke_width) {
@@ -103,6 +106,10 @@ public class Shape implements Cloneable {
         dto.strokeWidth = this.stroke_width;
         dto.fill = this.fill_color;
         dto.strokeColor = this.stroke_color;
+        dto.scaleX = this.scaleX;
+        dto.scaleY= this.scaleY;
+        dto.offsetX=this.offsetX;
+        dto.offsetY=this.offsetY;
         if (this instanceof Circle) {
             Circle circle = (Circle) this;
             dto.radius = circle.getRadius();

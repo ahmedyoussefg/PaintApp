@@ -17,8 +17,8 @@ import com.jetbrains.csed.paint.Shapes.Circle;
 
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:8080" )
-@CrossOrigin(origins = "http://192.168.0.161:8080" )
+@CrossOrigin(origins = "http://localhost:8080" )
+//@CrossOrigin(origins = "http://192.168.0.161:8080" )
 public class Controller {
     private XmlService xmlService = new XmlService();
     ShapeFactory factory = new ShapeFactory();
@@ -29,7 +29,6 @@ public class Controller {
         Shape new_shape = factory.getShape(shape_data);
         db.draw(new_shape);
         DEBUG();
-        return;
     }
 
     @PostMapping(value="/copy")
@@ -42,6 +41,11 @@ public class Controller {
         //DEBUG
         DEBUG();
         return copied.shapeToDTO();
+    }
+    @GetMapping(value="/clear")
+    public void clearCanvas() {
+        Database db = Database.getInstance();
+        db.clear();
     }
 
     @PostMapping(value="/undo")
@@ -61,7 +65,9 @@ public class Controller {
     public void updateShape(@RequestBody ShapeDTO data){
         Database db = Database.getInstance();
         Shape new_shape = factory.getShape(data);
+        System.out.println("CALLED UPDATE");
         db.update(new_shape);
+        DEBUG();
     }
 
     @PostMapping(value="/delete")

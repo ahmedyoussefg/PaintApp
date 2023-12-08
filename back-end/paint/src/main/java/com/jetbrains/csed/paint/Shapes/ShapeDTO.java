@@ -22,6 +22,8 @@ public class ShapeDTO {
     public double strokeWidth;
     public String fill;
     public String strokeColor;
+    public double offsetX;
+    public double offsetY;
     public String shapeType;
     public int id;
 }
