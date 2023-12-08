@@ -284,6 +284,8 @@ Redo() {
       case 'line_segment':{
         this.line = Line.drawLine({
         points: shape.points,
+        x: shape.x,
+        y: shape.y,
         stroke: shape.strokeColor,
         strokeWidth: shape.strokeWidth,
         draggable:false,
@@ -297,6 +299,8 @@ Redo() {
       }
       case 'pencil':{
       this.pen = Line.drawLine({
+      x: shape.x,
+      y: shape.y,
       stroke: shape.strokeColor,
       strokeWidth: shape.strokeWidth,
       lineCap: 'round', 
@@ -489,7 +493,7 @@ Redo() {
         console.log('shapeID', this.shapeID.toString());
         console.log('Id of copied shape', shapeid);
         this.draw_instance(response.data);
-        return response.data;
+        //return response.data;
       })
       .catch (error => {
         console.error('Error copying shape:' , error);
@@ -504,10 +508,31 @@ Redo() {
       this.stage.off('mouseout');
       this.stage.off('click');
 
-      let copiedShape = null;
       let original_color;
       let original_stroke;
 
+      //Copy Shape on Click
+      this.stage.on('click', (e)=>{
+        if(this.shape !== this.stage){
+          if(this.shape instanceof Konva.Shape){
+            this.requestcopy(this.shape.id());
+          }
+        }
+      });
+        /*//if(this.transformer){
+            //console.log("IF");
+            //console.log("Shape ID:  SSS ", this.shape.id());
+            //copiedShape = this.requestcopy(this.shape.id());
+            //this.transformer.destroy();
+            //this.transformer = null;
+            //document.body.style.cursor = 'default';
+          //}
+          //else{
+            //console.log("Shape", this.shape.id());
+            //console.log("ELSE");
+            copiedShape = this.requestcopy(this.shape.id());
+            //document.body.style.cursor = 'default';
+          }*/
       
       this.stage.on('mouseover', (e) => {
         this.shape = e.target;
@@ -538,8 +563,8 @@ Redo() {
           this.shape.shadowOpacity(0.7);
           
           this.layer.batchDraw();
-          if(copiedShape !== null)
-            this.draw_instance(copiedShape);
+          //if(copiedShape !== null)
+            //this.draw_instance(copiedShape);
         }
       });
 
@@ -551,26 +576,6 @@ Redo() {
           this.shape.shadowOpacity(0)
         }
       });
-
-      //Copy Shape On click
-      if(this.shape){
-        this.shape.on('click', ()=>{
-          //if(this.transformer){
-            //console.log("IF");
-            //console.log("Shape ID:  SSS ", this.shape.id());
-            //copiedShape = this.requestcopy(this.shape.id());
-            //this.transformer.destroy();
-            //this.transformer = null;
-            //document.body.style.cursor = 'default';
-          //}
-          //else{
-            console.log("Shape", this.shape.id());
-            //console.log("ELSE");
-            copiedShape = this.requestcopy(this.shape.id());
-            document.body.style.cursor = 'default';
-          //}
-        });
-      }
     },
 
     async requestdelete(shapeid){
@@ -599,10 +604,8 @@ Redo() {
 
       //Delete Shape On-Click
       this.stage.on('click', (e)=>{
-        //const clickedShape = e.target;
         if(this.shape !== this.stage){
           if(this.shape instanceof Konva.Shape){
-            //this.shape = clickedShape;
             this.requestdelete(this.shape.id());
             this.shape.destroy();
             document.body.style.cursor = 'default';
