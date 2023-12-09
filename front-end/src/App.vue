@@ -124,7 +124,7 @@ export default {
     },
     async fetchAndSaveData() {
       try {
-        const response = await axios.get('http://localhost:8081/saveJSON');
+        const response = await axios.get('http://192.168.0.166:8081/saveJSON');
         const jsonData = response.data;
         const jsonString = JSON.stringify(jsonData, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
@@ -136,7 +136,7 @@ export default {
     },
     async requestsave()
     {
-      axios.post('http://localhost:8081/saveJSON')
+      axios.post('http://192.168.0.166:8081/saveJSON')
       .then(response => {
       const jsonData = JSON.stringify(response.data, null, 2);
       const blob = new Blob([jsonData], { type: "application/json" });
@@ -145,7 +145,7 @@ export default {
     },
     async requestdraw(shapeData)
     {
-      axios.post('http://localhost:8081/draw',shapeData)
+      axios.post('http://192.168.0.166:8081/draw',shapeData)
       .then (response => {
         console.log('Shape saved successfully:',response.data.id);
       })
@@ -154,7 +154,7 @@ export default {
       });
     },
     async requestundo() {
-    return axios.post('http://localhost:8081/undo') // Returning the promise
+    return axios.post('http://192.168.0.166:8081/undo') // Returning the promise
     .then(response => {
       this.board = response.data;
       return this.board; 
@@ -165,7 +165,7 @@ export default {
     });
     },
     async requestredo() {
-      return axios.post('http://localhost:8081/redo') // Returning the promise
+      return axios.post('http://192.168.0.166:8081/redo') // Returning the promise
     .then(response => {
       this.board = response.data;
       return this.board; 
@@ -331,7 +331,7 @@ Redo() {
       
       this.stage.on('click', (e) => {
         const clickedShape = e.target;
-        if(clickedShape !== this.stage){
+        if(clickedShape !== this.stage && !(clickedShape instanceof Konva.Transformer)){
           this.shape = clickedShape;
           if (this.transformer){
               if(clickedShape instanceof Konva.Shape){
@@ -343,8 +343,9 @@ Redo() {
               this.transformer = new Konva.Transformer({
                   nodes: [clickedShape],
                   centeredScaling: true,
+                  ignoreStroke: true,
               });
-              //this.transformer.moveToTop();
+              this.transformer.moveToTop();
               console.log("Hello from creating transformer");
               this.layer.add(this.transformer);
             }
@@ -356,8 +357,9 @@ Redo() {
             this.transformer = new Konva.Transformer({
                   nodes: [],
                   centeredScaling: true,
+                  ignoreStroke: true,
             });
-            //this.transformer.moveToTop();
+            this.transformer.moveToTop();
             this.layer.add(this.transformer);
           }
         }
@@ -370,7 +372,9 @@ Redo() {
           original_color = this.shape.fill();
           original_stroke = this.shape.getStroke();
 
-          console.log(this.shape.id());
+          if(this.shape !== this.transformer){
+              console.log(this.shape.id());
+          }
           if(original_color !== '#FF0C59'){
             this.shape.fill('#FF0C59');
           }
@@ -486,7 +490,7 @@ Redo() {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     async requestcopy(shapeid)
     {
-      axios.post('http://localhost:8081/copy',[shapeid, this.shapeID.toString()])
+      axios.post('http://192.168.0.166:8081/copy',[shapeid, this.shapeID.toString()])
       .then (response => {
         this.shapeID++;
         console.log('Shape copied successfully:',response.data),
@@ -579,7 +583,7 @@ Redo() {
     },
 
     async requestdelete(shapeid){
-      axios.post('http://localhost:8081/delete',shapeid)
+      axios.post('http://192.168.0.166:8081/delete',shapeid)
       .then (response => {
         console.log(shapeid);
         console.log('Shape deleted successfully:',response.data),
@@ -651,6 +655,7 @@ Redo() {
         if(this.shape instanceof Konva.Shape){
           this.shape.fill(original_color);
           this.shape.setStroke(original_stroke);
+          this.shape.shadowOpacity(0);
         }
       });
 
