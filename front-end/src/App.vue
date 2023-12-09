@@ -126,6 +126,13 @@ export default {
       showModalSave :false,
       shape: null,
       transformer: null,
+      clickedcircle :false,
+      clickedrec :false,
+      clickedsq :false,
+      clickedtr :false,
+      clickedellipse :false,
+      clickedline :false,
+      clickedpen :false,
     }
   },
   mounted() {
@@ -842,6 +849,77 @@ Redo() {
       this.stage.off('mouseout');
       this.stage.off('mouseover');
       this.stage.off('click');
+      if (shapetype === 'circle')
+        {
+          this.clickedcircle = true
+          this.clickedellipse = false
+          this.clickedline = false
+          this.clickedpen = false
+          this.clickedrec = false
+          this.clickedsq = false
+          this.clickedtr = false 
+        }
+        else if (shapetype === 'ellipse')
+        {
+          this.clickedcircle = false
+          this.clickedellipse = true
+          this.clickedline = false
+          this.clickedpen = false
+          this.clickedrec = false
+          this.clickedsq = false
+          this.clickedtr = false 
+        }
+        else if (shapetype === 'line')
+        {
+          this.clickedcircle = false
+          this.clickedellipse = false
+          this.clickedline = true
+          this.clickedpen = false
+          this.clickedrec = false
+          this.clickedsq = false
+          this.clickedtr = false 
+        }
+        else if (shapetype === 'pencil')
+        {
+          this.clickedcircle = false
+          this.clickedellipse = false
+          this.clickedline = false
+          this.clickedpen = true
+          this.clickedrec = false
+          this.clickedsq = false
+          this.clickedtr = false 
+        }
+        else if (shapetype === 'rectangle')
+        {
+          this.clickedcircle = false
+          this.clickedellipse = false
+          this.clickedline = false
+          this.clickedpen = false
+          this.clickedrec = true
+          this.clickedsq = false
+          this.clickedtr = false 
+        }
+        else if (shapetype === 'square')
+        {
+          this.clickedcircle = false
+          this.clickedellipse = false
+          this.clickedline = false
+          this.clickedpen = false
+          this.clickedrec = false
+          this.clickedsq = true
+          this.clickedtr = false 
+        }
+        else if (shapetype === 'triangle')
+        {
+          this.clickedcircle = false
+          this.clickedellipse = false
+          this.clickedline = false
+          this.clickedpen = false
+          this.clickedrec = false
+          this.clickedsq = false
+          this.clickedtr = true 
+
+        }
 
       this.stage.on('mousedown', (e) => {
       if (!this.isDrawing) {
