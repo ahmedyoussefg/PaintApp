@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +18,8 @@ import com.jetbrains.csed.paint.Shapes.Circle;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8080" )
-//@CrossOrigin(origins = "http://192.168.0.161:8080" )
+//@CrossOrigin(origins = "http://localhost:8080" )
+@CrossOrigin(origins = "*" )
 public class Controller {
     private XmlService xmlService = new XmlService();
     ShapeFactory factory = new ShapeFactory();
@@ -79,21 +80,29 @@ public class Controller {
         System.out.println("TODELETE: "+deleted_id);
         db.delete(Integer.parseInt(deleted_id));
     }
-    @PostMapping(value="/saveJSON")
+    @GetMapping(value="/saveJSON")
     public ArrayList<ShapeDTO> saveJSON() {
+        Database db = Database.getInstance();
+        System.out.println("Saving JSON.");
+
+        return db.getDrawnShapesDTOs();
+    }
+    @PostMapping(value="/loadJSON")
+    public ArrayList<ShapeDTO> loadJSON(@RequestBody ShapeDTO[] ShapeData) {
+        Database.cleanDatabase();
+
+        System.out.println("LOADING JSON");
+        for (ShapeDTO Shape: ShapeData) {
+            drawShape(Shape);
+        }
         Database db = Database.getInstance();
         return db.getDrawnShapesDTOs();
     }
-    // @PostMapping(value="/loadJSON")
-    // public HashMap<Integer, Shape> loadJSON(@RequestBody HashMap<Integer, Shape> ShapeData) {
-    //     Database db = Database.getInstance();
-    //     db.setDrawnShapes(ShapeData);
-    //     return db.getDrawnShapes();
-    // }
 
     @GetMapping("/saveXML")
     public String getShapesXml() throws JsonProcessingException {
         Database db = Database.getInstance();
+        System.out.println("Saving XML.");
         ArrayList<ShapeDTO> ShapesData = db.getDrawnShapesDTOs();
         return xmlService.convertToXml(ShapesData);
     }
@@ -101,6 +110,10 @@ public class Controller {
     @PostMapping("/loadXML")
     public ArrayList<ShapeDTO> getShapesFromXml(@RequestBody String xml) throws IOException {
         System.out.println(xml);
+        xml = URLDecoder.decode(xml, "UTF-8");
+        System.out.println(xml);
+        System.out.println("loading XML.");
+
         Database.cleanDatabase();
         ArrayList<ShapeDTO> Shapes = xmlService.convertXmlToShapes(xml);
 
@@ -115,7 +128,7 @@ public class Controller {
     public void cleanCanvas() {
         Database.cleanDatabase();
     }
-    
+
     // to see saved shapes
     public void DEBUG(){
         Database db = Database.getInstance();
