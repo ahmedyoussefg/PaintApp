@@ -1,4 +1,4 @@
-# modal-project
+# paint
 
 ## Project setup
 ```

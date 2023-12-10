@@ -1,6 +1,7 @@
 package com.jetbrains.csed.paint;
 
 import com.jetbrains.csed.paint.Actions.DrawingArea;
+import com.jetbrains.csed.paint.Shapes.LineSegment;
 import com.jetbrains.csed.paint.Shapes.Shape;
 import com.jetbrains.csed.paint.Shapes.ShapeDTO;
 
@@ -42,6 +43,11 @@ public class Database {
         }
     }
 
+    public void clear(){
+        HashMap<Integer, Shape> curr=new HashMap<>();
+        drawingArea.setShapes(curr);
+        this.undo_stack.push(this.drawingArea.takeSnapshot());
+    }
     public void draw(Shape new_shape) {
         HashMap<Integer, Shape> curr= drawingArea.getDrawnShapes();
         curr.put(new_shape.getId(), new_shape);
@@ -55,7 +61,15 @@ public class Database {
     public Shape copy(Shape old_version, int copied_id) throws CloneNotSupportedException {
         Shape cloned = old_version.clone();
         // make small offset in x and y of position
-        Point2D.Double new_point = new Point2D.Double(cloned.getPosition().getX()+7,cloned.getPosition().getY()+7);
+        double offset_x=0;
+        double offset_y=0;
+        offset_x=15;
+        offset_y=15;
+        if(old_version instanceof LineSegment){
+            offset_y=30;
+            offset_x=30;
+        }
+        Point2D.Double new_point = new Point2D.Double(cloned.getPosition().getX()+offset_x,cloned.getPosition().getY()+offset_y);
 
         cloned.setPosition(new_point);
         cloned.setId(copied_id);

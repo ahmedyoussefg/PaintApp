@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ import com.jetbrains.csed.paint.Shapes.Circle;
 
 @RestController
 //@CrossOrigin(origins = "http://localhost:8080" )
-@CrossOrigin(origins = "http://192.168.0.161:8080" )
+@CrossOrigin(origins = "*" )
 public class Controller {
     private XmlService xmlService = new XmlService();
     ShapeFactory factory = new ShapeFactory();
@@ -29,7 +30,6 @@ public class Controller {
         Shape new_shape = factory.getShape(shape_data);
         db.draw(new_shape);
         DEBUG();
-        return;
     }
 
     @PostMapping(value="/copy")
@@ -43,11 +43,17 @@ public class Controller {
         DEBUG();
         return copied.shapeToDTO();
     }
+    @GetMapping(value="/clear")
+    public void clearCanvas() {
+        Database db = Database.getInstance();
+        db.clear();
+    }
 
     @PostMapping(value="/undo")
     public ArrayList<ShapeDTO> undo(){
         Database db = Database.getInstance();
         db.undo();
+        DEBUG();
         return db.getDrawnShapesDTOs();
     }
 
@@ -55,13 +61,17 @@ public class Controller {
     public ArrayList<ShapeDTO> redo(){
         Database db = Database.getInstance();
         db.redo();
+        DEBUG();
         return db.getDrawnShapesDTOs();
     }
     @PostMapping(value="/update")
     public void updateShape(@RequestBody ShapeDTO data){
         Database db = Database.getInstance();
+        System.out.println(data.scaleX +","+data.scaleY);
         Shape new_shape = factory.getShape(data);
+        System.out.println("CALLED UPDATE");
         db.update(new_shape);
+        DEBUG();
     }
 
     @PostMapping(value="/delete")
@@ -70,21 +80,29 @@ public class Controller {
         System.out.println("TODELETE: "+deleted_id);
         db.delete(Integer.parseInt(deleted_id));
     }
-    @PostMapping(value="/saveJSON")
+    @GetMapping(value="/saveJSON")
     public ArrayList<ShapeDTO> saveJSON() {
+        Database db = Database.getInstance();
+        System.out.println("Saving JSON.");
+
+        return db.getDrawnShapesDTOs();
+    }
+    @PostMapping(value="/loadJSON")
+    public ArrayList<ShapeDTO> loadJSON(@RequestBody ShapeDTO[] ShapeData) {
+        Database.cleanDatabase();
+
+        System.out.println("LOADING JSON");
+        for (ShapeDTO Shape: ShapeData) {
+            drawShape(Shape);
+        }
         Database db = Database.getInstance();
         return db.getDrawnShapesDTOs();
     }
-    // @PostMapping(value="/loadJSON")
-    // public HashMap<Integer, Shape> loadJSON(@RequestBody HashMap<Integer, Shape> ShapeData) {
-    //     Database db = Database.getInstance();
-    //     db.setDrawnShapes(ShapeData);
-    //     return db.getDrawnShapes();
-    // }
 
     @GetMapping("/saveXML")
     public String getShapesXml() throws JsonProcessingException {
         Database db = Database.getInstance();
+        System.out.println("Saving XML.");
         ArrayList<ShapeDTO> ShapesData = db.getDrawnShapesDTOs();
         return xmlService.convertToXml(ShapesData);
     }
@@ -92,6 +110,10 @@ public class Controller {
     @PostMapping("/loadXML")
     public ArrayList<ShapeDTO> getShapesFromXml(@RequestBody String xml) throws IOException {
         System.out.println(xml);
+        xml = URLDecoder.decode(xml, "UTF-8");
+        System.out.println(xml);
+        System.out.println("loading XML.");
+
         Database.cleanDatabase();
         ArrayList<ShapeDTO> Shapes = xmlService.convertXmlToShapes(xml);
 
@@ -106,7 +128,7 @@ public class Controller {
     public void cleanCanvas() {
         Database.cleanDatabase();
     }
-    
+
     // to see saved shapes
     public void DEBUG(){
         Database db = Database.getInstance();
@@ -116,7 +138,7 @@ public class Controller {
             int saved_id = set.getKey();
             Shape saved_shape = set.getValue();
             System.out.println("SAVED ID = "+ saved_id);
-            System.out.printf("x: %f, y: %f, id: %d", saved_shape.getPosition().getX(), saved_shape.getPosition().getY(), saved_shape.getId() );
+            System.out.printf("x: %f, y: %f, id: %d %f", saved_shape.getPosition().getX(), saved_shape.getPosition().getY(), saved_shape.getId(), saved_shape.getRotation() );
 
             System.out.println("_________________________________________");
         }
