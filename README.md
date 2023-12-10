@@ -60,6 +60,7 @@ The GUI of the application boasts an extensive array of functionalities for user
 - Clear the canvas: This action clears the drawing area. It can also be undone if done by mistake.
 - Fill the shape: An option to fill the selected (previously drawn) shape with the desired color from the color picker.
 - There is an endpoint **`/clean`** that can be accessed to clean the database (mostly for developers).
+- Keyboard Functionality: CTRL+Z to undo & CTRL+Y to redo.
 
 ### **3.2 User-Friendly Interface**
 
