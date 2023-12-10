@@ -86,6 +86,14 @@ import axios from 'axios';
 import { saveAs } from 'file-saver';
 
 export default {
+  created() {
+    // Adding a global event listener for keydown event on the document
+    document.addEventListener('keydown', this.handleKeyPress);
+  },
+  destroyed() {
+    // Remove the event listener when the component is destroyed
+    document.removeEventListener('keydown', this.handleKeyPress);
+  },
   data(){
     return {
       saveitems: [
@@ -173,6 +181,18 @@ export default {
 },
 
   methods: {
+    handleKeyPress(event) {
+      // Check if the Ctrl key is pressed (on Windows/Linux) or the Command key (on Mac)
+      if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+        // Perform the undo action here
+        this.Undo();}
+      if ((event.ctrlKey || event.metaKey) && event.key === 'y') {
+        // Perform the Redo action here
+        this.Redo();
+        
+      
+      }
+    },
     toggleSave(event) {
       this.$refs.Savemenu.toggle(event);
     },
