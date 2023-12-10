@@ -2,57 +2,38 @@
     <div class="main">
       <div class="tools">
         <div class="shapes">
-          <button @click="hover_element(); reset_selection() " title="Select"><span style="font-size: x-large">Select</span></button>         
-         
-           <div v-if="showModalSave" class="modal">
-            <div class="modal-content">
-              <h2>Choose File Type</h2>
-              <button @click="saveAsXML()">Save as XML</button>
-              <button @click="saveAsJSON()">Save as JSON</button>
-            </div>
-          </div>
-         
-          <div v-if="showModalload" class="modal">
-            <div class="modal-content">
-              <h2>Choose File Type</h2>
-              <button @click="triggerFileInputXML">Load XML File</button>
-              <input ref="fileInputXML" type="file" style="display: none" @change="readFileXML($event)" />
-              <button @click="triggerFileInputJSON">Load JSON File</button>
-              <input ref="fileInputJSON" type="file" style="display: none" @change="readFileJSON($event)" />
-            </div>
-          </div> 
-          
+          <button v-if="!clickedsel" @click="hover_element(); clickedsel = true ;reset_selection();"><span style="font-size: x-large" v-tooltip.bottom="'Select'"><font-awesome-icon :icon="['fas', 'arrow-pointer']" /></span> </button>
+          <button v-if="clickedsel" style="color:#f0f8ff;" @click="hover_element(); clickedsel = false ; reset_selection();"><span style="font-size: x-large" ><font-awesome-icon :icon="['fas', 'arrow-pointer']" /></span> </button>         
           <div class="A">
-          <button v-if="!clickedcircle"  @click="drawshape('circle'); reset_selection();" title="Circle"> <span style="font-size: x-large; font-weight: bold;"> &#9711;</span> </button>
-          <button style="color: aliceblue;" v-if="clickedcircle"  @click="drawshape('circle'); reset_selection();" title="Circle"> <span style="font-size: x-large; font-weight: bold;"> &#9711;</span> </button>
-          <button v-if="!clickedrec" @click="drawshape('rectangle'); reset_selection();" title="Rectangle"><span style="font-size: xx-large;">&#9645;</span></button>
-          <button v-if="clickedrec"  style="color: aliceblue;" @click="drawshape('rectangle'); reset_selection();" title="Rectangle"><span style="font-size: xx-large;">&#9645;</span></button>
-          <button v-if="!clickedsq" @click="drawshape('square'); reset_selection();" title="Square"><span style="font-size: xx-large;">&#9723; </span></button>
-          <button v-if="clickedsq"  style="color: aliceblue;" @click="drawshape('square'); reset_selection();" title="Square"><span style="font-size: xx-large;">&#9723; </span></button>
-          <button v-if="!clickedtr" @click="drawshape('triangle'); reset_selection();" title="Triangle"><span style="font-size: xx-large;">&#9651;</span></button>
-          <button v-if="clickedtr"  style="color: aliceblue;" @click="drawshape('triangle'); reset_selection();" title="Triangle"><span style="font-size: xx-large;">&#9651;</span></button>
-          <button v-if="!clickedellipse" class="elip" @click="drawshape('ellipse'); reset_selection();" title="Ellipse"><span style="font-size: xx-large;">&#11053;</span> </button>
-          <button v-if="clickedellipse" style="color: aliceblue;" class="elip" @click="drawshape('ellipse'); reset_selection();" title="Ellipse"><span style="font-size: xx-large;">&#11053;</span> </button>
-          <button v-if="!clickedline" @click="drawshape('line'); reset_selection();" title="Line"><span style="font-size: xx-large;">/</span></button>
-          <button v-if="clickedline"  style="color: aliceblue;" @click="drawshape('line'); reset_selection();" title="Line"><span style="font-size: xx-large;">/</span></button>
-          <button v-if="!clickedpen" @click="drawshape('pencil'); reset_selection();" title="Pencil"><span style="font-size: xx-large;">&#9998;</span> </button>
-          <button v-if="clickedpen"  style="color: aliceblue;" @click="drawshape('pencil'); reset_selection();" title="Pencil"><span style="font-size: xx-large;">&#9998;</span> </button>
-
+            <button v-if="!clickedcircle"  @click="drawshape('circle'); reset_selection();" v-tooltip.bottom="'Circle'"> <span style="font-size: x-large; font-weight: bold;"> &#9711;</span> </button>
+            <button style="color: #f0f8ff;" v-if="clickedcircle"  @click="drawshape('circle'); reset_selection();" v-tooltip.bottom="'Circle'"> <span style="font-size: x-large; font-weight: bold;"> &#9711;</span> </button>
+            <button v-if="!clickedrec" @click="drawshape('rectangle'); reset_selection();" v-tooltip.bottom="'Rectangle'"><span style="font-size: xx-large;">&#9645;</span></button>
+            <button v-if="clickedrec"  style="color: #f0f8ff;" @click="drawshape('rectangle'); reset_selection();" v-tooltip.bottom="'Rectangle'"><span style="font-size: xx-large;">&#9645;</span></button>
+            <button v-if="!clickedsq" @click="drawshape('square'); reset_selection();" v-tooltip.bottom="'Square'"><span style="font-size: xx-large;">&#9723; </span></button>
+            <button v-if="clickedsq"  style="color: #f0f8ff;" @click="drawshape('square'); reset_selection();" v-tooltip.bottom="'Square'"><span style="font-size: xx-large;">&#9723; </span></button>
+            <button v-if="!clickedtr" @click="drawshape('triangle'); reset_selection();" v-tooltip.bottom="'Triangle'"><span style="font-size: xx-large;">&#9651;</span></button>
+            <button v-if="clickedtr"  style="color: #f0f8ff;" @click="drawshape('triangle'); reset_selection();" v-tooltip.bottom="'Triangle'"><span style="font-size: xx-large;">&#9651;</span></button>
+            <button v-if="!clickedellipse" class="elip" @click="drawshape('ellipse'); reset_selection();" v-tooltip.bottom="'Ellipse'"><span style="font-size: xx-large;">&#11053;</span> </button>
+            <button v-if="clickedellipse" style="color: #f0f8ff;" class="elip" @click="drawshape('ellipse'); reset_selection();" v-tooltip.bottom="'Ellipse'"><span style="font-size: xx-large;">&#11053;</span> </button>
+            <button v-if="!clickedline" @click="drawshape('line'); reset_selection();" v-tooltip.bottom="'Line'"><span style="font-size: xx-large;">/</span></button>
+            <button v-if="clickedline"  style="color: #f0f8ff;" @click="drawshape('line'); reset_selection();" v-tooltip.bottom="'Line'"><span style="font-size: xx-large;">/</span></button>
+            <button v-if="!clickedpen" @click="drawshape('pencil'); reset_selection();" v-tooltip.bottom="'Pencil'"><span style="font-size: xx-large;">&#9998;</span> </button>
+            <button v-if="clickedpen"  style="color: #f0f8ff;" @click="drawshape('pencil'); reset_selection();" v-tooltip.bottom="'Pencil'"><span style="font-size: xx-large;">&#9998;</span> </button>
           </div>
 
           <div style="margin-left: 10px;" class="A">
-            <button title="eraser" @click="drawshape('eraser'); reset_selection()"><span style="font-size: x-large;"><font-awesome-icon :icon="['fas', 'eraser']" />Eraser</span></button>
-            <button title="clear" class = "clear" @click="clear(); reset_selection()"><span style="font-size: x-large;"><font-awesome-icon :icon="['fas', 'broom']" />Clear</span> </button>
-
-
+            <button v-if="!clickeder" v-tooltip.bottom="'Eraser'" @click="drawshape('eraser'); reset_selection()"><span style="font-size: x-large;"><font-awesome-icon :icon="['fas', 'eraser']" /></span></button>
+            <button v-if="clickeder" style="color: #f0f8ff;" v-tooltip.bottom="'Eraser'" @click="drawshape('eraser'); reset_selection()"><span style="font-size: x-large;"><font-awesome-icon :icon="['fas', 'eraser']" /></span></button>
+            <button v-tooltip.bottom="'Clear'" class = "clear" @click="clear(); reset_selection()"><span style="font-size: x-large;"><font-awesome-icon :icon="['fas', 'broom']" /></span> </button>
           </div>
 
           <div class="B">
             <!-- <label for="colorfill">Fill Color</label> -->
-            <button v-if="!clickedpen" title="fill" @click="fill_shape(); ; reset_selection();"><span style="font-size: x-large;"><font-awesome-icon :icon="['fas', 'fill']" />Fill</span></button>
-            <input class="color" title="Fill" v-model="fill_color"  type="color" id="colorfill">
-            <input class="color" title="Stroke" v-model="stroke_color"  type="color" id="colorstroke">
-            <select name="strokewidth" class="strokeW" v-model="stroke_Width" id="widthstroke">
+            <button v-if="!clickedbuc" v-tooltip.bottom="'Fill'" @click="bucket_fill();clickedbuc = true;reset_selection();"><span style="font-size: x-large;"><font-awesome-icon :icon="['fas', 'fill']" /></span></button>
+            <button v-if="clickedbuc" style="color: #f0f8ff;" v-tooltip.bottom="'Fill'" @click="bucket_fill();clickedbuc=false;reset_selection();"><span style="font-size: x-large;"><font-awesome-icon :icon="['fas', 'fill']" /></span></button>
+            <input class="color" v-tooltip.bottom="'Fill Picker'" v-model="fill_color"  type="color" id="colorfill">
+            <input class="color" v-tooltip.bottom="'Stroke'" v-model="stroke_color"  type="color" id="colorstroke">
+            <select name="strokewidth" v-model="stroke_Width" id="widthstroke">
               <option value="2">Size</option>
               <option value="4">4</option>
               <option value="6">6</option>
@@ -67,30 +48,30 @@
           </div>
 
           <div style="margin-left: 30px;" class="A">
-            <button title="Undo" @click="Undo"><span style="font-size: xx-large;">&#8617;</span> </button>
-            <button title="Redo" @click="Redo"><span style="font-size:xx-large;">&#8618;</span> </button>
+            <button v-tooltip.bottom="'Undo'" @click="Undo();reset_selection()"><span style="font-size: xx-large;">&#8617;</span> </button>
+            <button v-tooltip.bottom="'Redo'" @click="Redo();reset_selection()"><span style="font-size:xx-large;">&#8618;</span> </button>
           </div>
 
-          <div class="A">
-            <button @click="Save(); reset_selection()"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'floppy-disk']" /></span> Save</button>
-            <button @click="Load(); reset_selection()"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'cloud-arrow-up']" /></span> Load</button>
-          </div>
+          <div class="A flex items-center justify">
+            <button v-if="!clickedcp" v-tooltip.bottom="'Copy'" @click="copy_shape(); clickedcp = true;reset_selection()"><span style="font-size: larger;"><font-awesome-icon :icon="['fas', 'copy']" /></span></button>
+            <button v-if="clickedcp" style="color: #f0f8ff;" v-tooltip.bottom="'Copy'" @click="copy_shape(); clickedcp = false;reset_selection()"><span style="font-size: larger;"><font-awesome-icon :icon="['fas', 'copy']" /></span></button>
+            <button v-if="!clickeddl" v-tooltip.bottom="'Delete'" @click="delete_shape(); clickeddl=true;reset_selection();"><span style="font-size: larger;"><font-awesome-icon :icon="['fas', 'trash-can']" /></span></button>
+            <button v-if="clickeddl" style="color: #f0f8ff;" v-tooltip.bottom="'Delete'" @click="delete_shape(); clickeddl = false;reset_selection();"><span style="font-size: larger;"><font-awesome-icon :icon="['fas', 'trash-can']" /></span></button>
+            <input ref="fileInputXML" type="file" id="fileInput" @change="loadXML" style="display: none;" />
+            <input ref="fileInputJSON" type="file" id="fileInput" @change="loadJSON" style="display: none;" />
+            <button @click="toggleSave" v-tooltip.bottom="'Save'"><span class="pi pi-save"></span></button>
+            <Menu id="overlay_menu" ref="Savemenu" :model="saveitems" :popup="true" />
+            <button @click="toggleLoad" v-tooltip.bottom="'Load'"><span class="pi pi-upload"></span></button>
+            <Menu id="overlay_menu" ref="Loadmenu" :model="loaditems" :popup="true" />
 
-
-
-          
+          </div>          
         </div><br>
           
       </div>
       <div class="board" ref="stageContainer"></div>
-      <div id="popup" class="overlay" style="position: absolute; display: block; top: 250px; right: 70px;">
-        <ul>
-          <li><button @click="copy_shape"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'copy']" /></span> Copy</button></li>
-          <li><button @click="delete_shape"><span style="font-size: smaller;"><font-awesome-icon :icon="['fas', 'trash-can']" /></span> Delete</button></li>
-        </ul>
-      </div>
     </div>
-  </template>   
+
+</template>   
 
 <script>
 import Konva from 'konva';
@@ -102,12 +83,42 @@ import ellipse   from '../src/ellipse';
 import Line from '../src/Line';
 import ShapeDTO from '../src/ShapeDTO';
 import axios from 'axios';
+import { saveAs } from 'file-saver';
 
 export default {
   data(){
     return {
-      fill_color : 'aliceblue',
-      stroke_color : 'black',
+      saveitems: [
+        {
+          label: 'Save JSON',
+          command: () => {
+            this.saveAsJSON();
+          },
+        },
+        {
+          label: 'Save XML',
+          command: () => {
+            this.saveAsXML();
+          },
+        },
+      ],
+      loaditems: [
+        {
+          label: 'Load JSON',
+          command: () => {
+            this.triggerFileInputJSON();
+          },
+        },
+        {
+          label: 'Load XML',
+          command: () => {
+            this.triggerFileInputXML();
+          },
+        },
+      ],
+
+      fill_color : '#f0f8ff',
+      stroke_color : '#000000',
       stroke_Width :2,
       startx:0,
       starty:0,
@@ -127,6 +138,7 @@ export default {
       showModalSave :false,
       shape: null,
       transformer: null,
+      clickedsel: false,
       clickedcircle :false,
       clickedrec :false,
       clickedsq :false,
@@ -134,19 +146,39 @@ export default {
       clickedellipse :false,
       clickedline :false,
       clickedpen :false,
+      clickeder: false,
+      clickedbuc: false,
+      clickeddl: false,
+      clickedcp: false
     }
   },
   mounted() {
-      this.stage = new Konva.Stage({
+    this.stage = new Konva.Stage({
       container: this.$refs.stageContainer,
       width: window.innerWidth,
       height: window.innerHeight,
     });
     this.layer = new Konva.Layer();
     this.stage.add(this.layer);
-  },
+
+    axios.get('http://localhost:8081/board') // Returning the promise
+    .then(response => {
+        this.board = response.data;
+        this.drawBoard(this.board);
+    })
+    .catch(error => {
+      console.log('error retrive the canvas');
+      throw error;
+    });
+},
 
   methods: {
+    toggleSave(event) {
+      this.$refs.Savemenu.toggle(event);
+    },
+    toggleLoad(event) {
+      this.$refs.Loadmenu.toggle(event);
+    },
     Load()
     {
       this.showModalload = true
@@ -244,8 +276,7 @@ async  fetchAndSaveData() {
       .then (response => {
         this.board = response.data;
         console.log('Shape saved successfully:',response.data);
-        this.draw(this.board);
-        this.showModalload = false;
+        this.drawBoard(this.board);
         return this.board;
       })
       .catch (error => {
@@ -274,7 +305,6 @@ async  fetchAndSaveData() {
   readFileJSON(event) {
     console.log("redFile Json INSDE");
         const fileInput = event.target;
-  
     if (fileInput.files.length > 0) {
       const selectedFile = fileInput.files[0];
 
@@ -288,8 +318,8 @@ async  fetchAndSaveData() {
           axios.post('http://localhost:8081/loadJSON',shapesArray)
           .then (response => {
             this.board = response.data;
-            this.draw(this.board);
-            this.showModalload = false;
+            this.drawBoard(this.board);
+
             console.log('Shape saved successfully:',response.data)
             return this.board;
           })
@@ -338,9 +368,10 @@ async  fetchAndSaveData() {
     });
     },
 
-  draw(boardData) {
+  drawBoard(boardData) {
   this.layer.removeChildren();
   for (let i = 0; i < boardData.length; i++) {
+    console.log(boardData[i]);
     this.draw_instance(boardData[i]);
   }
 },
@@ -354,12 +385,23 @@ async requestClear(){
       throw error;
     });
 },
+ requestBoard(){
+  return axios.get('http://localhost:8081/board') // Returning the promise
+    .then(response => {
+        console.log('retrive the canvas');
+        this.board = response;
+    })
+    .catch(error => {
+      console.log('error clearing the canvas');
+      throw error;
+    });
+},
 
 Undo() {
   this.requestundo()
     .then(boardData => {
       console.log(boardData);
-      this.draw(boardData); // Call undo() with the updated board data
+      this.drawBoard(boardData); // Call undo() with the updated board data
     })
     .catch(error => {
       // Handle errors if any from the requestundo() function
@@ -371,7 +413,7 @@ Redo() {
   this.requestredo()
     .then(boardData => {
       console.log(boardData);
-      this.draw(boardData); // Call undo() with the updated board data
+      this.drawBoard(boardData); // Call undo() with the updated board data
     })
     .catch(error => {
       // Handle errors if any from the requestundo() function
@@ -520,6 +562,7 @@ Redo() {
   },
 
 
+
   hover_element(){
       this.stage.off('mouseover');
       this.stage.off('mousedown');
@@ -527,62 +570,15 @@ Redo() {
       this.stage.off('mouseup');
       this.stage.off('mouseout'); 
       this.stage.off('click');
+      this.stage.off('transformend');
+      this.stage.off('dragend');
 
       let original_color;
       let original_stroke;
-      
-      this.stage.on('click', (e) => {
-        const clickedShape = e.target;
-        console.log(e);
-        if(clickedShape !== this.stage && !(clickedShape instanceof Konva.Line && clickedShape.strokeColor==="aliceblue")){
-          this.shape = clickedShape;
-          if (this.transformer){
-              if(clickedShape instanceof Konva.Shape){
-                this.transformer.nodes([clickedShape]);
-                console.log("Hello from existing transformer");
-              }
-          }else{
-            e.target.on('transformend', ()=>{
-                console.log('transform ended');
-                let sent_shape = e.target;
-                if(sent_shape.fill() === '#FF0C59'){
-                  sent_shape.fill(original_color);
-                }
-                
-                if(sent_shape.getStroke() === '#43FFF9'){
-                  sent_shape.setStroke(original_stroke);
-                }
-                this.requestUpdate(sent_shape);
-              });
-            if(clickedShape instanceof Konva.Shape){
-              this.transformer = new Konva.Transformer({
-                  nodes: [clickedShape],
-                  centeredScaling: true,
-                  ignoreStroke: true,
-              });
-              this.transformer.moveToTop();
-              console.log("Hello from creating transformer");
-              this.layer.add(this.transformer);
-            }
-          }
-        }else{
-          if(this.transformer){
-            console.log("Hiding Transformer from stage");
-            this.transformer.destroy();
-            this.transformer = new Konva.Transformer({
-                  nodes: [],
-                  centeredScaling: true,
-                  ignoreStroke: true,
-            });
-            this.transformer.moveToTop();
-            this.layer.add(this.transformer);
-          }
-        }
-      });
 
       this.stage.on('mouseover', (e) => {
         this.shape = e.target;
-        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.strokeColor==="aliceblue")){
+        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.getStroke()==="#f0f8ff")){
           // Change Color
           original_color = this.shape.fill();
           original_stroke = this.shape.getStroke();
@@ -604,7 +600,7 @@ Redo() {
             this.shape.setStroke('#49FF43')
           }
           // Add Shadow
-          this.shape.shadowColor('black');
+          this.shape.shadowColor('#000000');
           this.shape.shadowBlur(10);
           this.shape.shadowOffset({ x: 8, y: 8  });
           this.shape.shadowOpacity(0.7);
@@ -616,10 +612,63 @@ Redo() {
         }
       });
 
+this.stage.on('click', (e) => {
+  const clickedShape = e.target;
+  console.log(e);
+
+  // Check if the clicked shape is not the stage itself
+  // and it's not a specific type of shape you want to ignore
+  if (clickedShape !== this.stage && !(clickedShape instanceof Konva.Line && clickedShape.getStroke() === '#f0f8ff')) {
+    // Remove transformer from the previously selected shape
+    if (this.transformer && this.shape) {
+      this.transformer.detach();
+      this.layer.draw();
+    }
+
+    this.shape = clickedShape;
+
+    // Check if the clicked shape is an instance of Konva.Shape
+    if (clickedShape instanceof Konva.Shape) {
+      // Create a new transformer for the clicked shape
+      this.transformer = new Konva.Transformer({
+        nodes: [clickedShape],
+        centeredScaling: true,
+        ignoreStroke: true,
+      });
+
+      // Add the transformer to the layer
+      this.layer.add(this.transformer);
+
+      console.log("Hello from creating transformer");
+
+      // Attach event listener for transformend event
+      clickedShape.on('transformend', () => {
+        console.log('transform ended');
+        let sentShape = clickedShape;
+        if (sentShape.fill() === '#FF0C59') {
+          sentShape.fill(original_color);
+        }
+
+        if (sentShape.getStroke() === '#43FFF9') {
+          sentShape.setStroke(original_stroke);
+        }
+
+        this.requestUpdate(sentShape);
+      });
+    }
+  } else {
+    // Hide the transformer if it exists
+    if (this.transformer) {
+      console.log("Hiding Transformer from stage");
+      this.transformer.detach();
+      this.layer.draw();
+    }
+  }
+});
       this.stage.on('mouseout', (e) => {
         this.shape = e.target;
 
-        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.strokeColor==="aliceblue")){
+        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.getStroke()==="#f0f8ff")){
           document.body.style.cursor = 'default';
           this.shape.draggable(false);
           //Return Color
@@ -759,7 +808,7 @@ Redo() {
     },
 
     //////////////////////////////
-    fill_shape(){
+    bucket_fill(){
       this.stage.off('mouseover');
       this.stage.off('mousedown');
       this.stage.off('mousemove');
@@ -793,12 +842,66 @@ Redo() {
         }
       });
     },
-
     reset_selection(){
       if(this.transformer){
         this.transformer.destroy();
       }
       this.transformer = null;
+      console.log("Delete", this.clickeddl);
+      console.log("Copy", this.clickedcp);
+      if(this.clickedsel){
+        this.clickedcircle =false
+          this.clickedrec = false
+          this.clickedsq = false
+          this.clickedtr = false
+          this.clickedellipse = false
+          this.clickedline =false
+          this.clickedpen =false
+          this.clickeder= false
+          this.clickedbuc= false
+          this.clickeddl= false
+          this.clickedcp= false
+      }
+      if(this.clickedbuc){
+        this.clickedcircle =false
+          this.clickedrec = false
+          this.clickedsq = false
+          this.clickedtr = false
+          this.clickedellipse = false
+          this.clickedline =false
+          this.clickedpen =false
+          this.clickeder= false
+          this.clickeddl= false
+          this.clickedcp= false
+          this.clickedsel = false
+      }
+      if(this.clickedcp){
+        this.clickedcircle =false
+          this.clickedrec = false
+          this.clickedsq = false
+          this.clickedtr = false
+          this.clickedellipse = false
+          this.clickedline =false
+          this.clickedpen =false
+          this.clickeder= false
+          this.clickedbuc= false
+          this.clickeddl= false
+          this.clickedsel = false
+      }
+      if(this.clickeddl){
+        this.clickedcircle =false
+          this.clickedrec = false
+          this.clickedsq = false
+          this.clickedtr = false
+          this.clickedellipse = false
+          this.clickedline =false
+          this.clickedpen =false
+          this.clickeder= false
+          this.clickedbuc= false
+          this.clickedcp= false
+          this.clickedsel = false
+      }
+
     },
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     async requestcopy(shapeid)
@@ -830,7 +933,7 @@ Redo() {
 
       //Copy Shape on Click
       this.stage.on('click', (e)=>{
-        if(this.shape !== this.stage && !(this.shape instanceof Konva.Line && this.shape.strokeColor==="aliceblue")){
+        if(this.shape !== this.stage && !(this.shape instanceof Konva.Line && this.shape.getStroke()==="#f0f8ff")){
           if(this.shape instanceof Konva.Shape){
             this.requestcopy(this.shape.id());
           }
@@ -839,7 +942,7 @@ Redo() {
       
       this.stage.on('mouseover', (e) => {
         this.shape = e.target;
-        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.strokeColor==="aliceblue")){
+        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.getStroke()==="#f0f8ff")){
           // Change Color
           document.body.style.cursor = 'grab';
           original_color = this.shape.fill();
@@ -860,7 +963,7 @@ Redo() {
           }
 
           // Add Shadow
-          this.shape.shadowColor('black');
+          this.shape.shadowColor('#000000');
           this.shape.shadowBlur(10);
           this.shape.shadowOffset({ x: 8, y: 8  });
           this.shape.shadowOpacity(0.7);
@@ -871,7 +974,7 @@ Redo() {
 
       this.stage.on('mouseout', (e) => {
         document.body.style.cursor = 'default';
-        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.strokeColor==="aliceblue")){
+        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.getStroke()==="#f0f8ff")){
           this.shape.fill(original_color);
           this.shape.setStroke(original_stroke);
           this.shape.shadowOpacity(0)
@@ -905,7 +1008,7 @@ Redo() {
 
       //Delete Shape On-Click
       this.stage.on('click', (e)=>{
-        if(this.shape !== this.stage && !(this.shape instanceof Konva.Line && this.shape.strokeColor==="aliceblue")){
+        if(this.shape !== this.stage && !(this.shape instanceof Konva.Line && this.shape.getStroke()==="#f0f8ff")){
           if(this.shape instanceof Konva.Shape){
             this.requestdelete(this.shape.id());
             this.shape.destroy();
@@ -917,7 +1020,7 @@ Redo() {
 
       this.stage.on('mouseover', (e) => {
         this.shape = e.target;
-        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.strokeColor==="aliceblue")){
+        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.getStroke()==="#f0f8ff")){
           // Change Color
           document.body.style.cursor = 'not-allowed';
           original_color = this.shape.fill();
@@ -938,7 +1041,7 @@ Redo() {
           }
 
           // Add Shadow
-          this.shape.shadowColor('black');
+          this.shape.shadowColor('#000000');
           this.shape.shadowBlur(10);
           this.shape.shadowOffset({ x: 8, y: 8  });
           this.shape.shadowOpacity(0.7);
@@ -949,7 +1052,7 @@ Redo() {
 
       this.stage.on('mouseout', (e) => {
         document.body.style.cursor = 'default';
-        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.strokeColor==="aliceblue")){
+        if(this.shape instanceof Konva.Shape && !(this.shape instanceof Konva.Line && this.shape.getStroke()==="#f0f8ff")){
           this.shape.fill(original_color);
           this.shape.setStroke(original_stroke);
           this.shape.shadowOpacity(0);
@@ -969,74 +1072,123 @@ Redo() {
       this.stage.off('click');
       if (shapetype === 'circle')
         {
-          this.clickedcircle = true
-          this.clickedellipse = false
-          this.clickedline = false
-          this.clickedpen = false
+          this.clickedcircle =true
           this.clickedrec = false
           this.clickedsq = false
-          this.clickedtr = false 
+          this.clickedtr = false
+          this.clickedellipse = false
+          this.clickedline =false
+          this.clickedpen =false
+          this.clickeder= false
+          this.clickedbuc= false
+          this.clickeddl= false
+          this.clickedcp= false
+          this.clickedsel = false
         }
         else if (shapetype === 'ellipse')
         {
-          this.clickedcircle = false
-          this.clickedellipse = true
-          this.clickedline = false
-          this.clickedpen = false
+          this.clickedcircle =false
           this.clickedrec = false
           this.clickedsq = false
-          this.clickedtr = false 
+          this.clickedtr = false
+          this.clickedellipse = true
+          this.clickedline =false
+          this.clickedpen =false
+          this.clickeder= false
+          this.clickedbuc= false
+          this.clickeddl= false
+          this.clickedcp= false
+          this.clickedsel = false
         }
         else if (shapetype === 'line')
         {
-          this.clickedcircle = false
-          this.clickedellipse = false
-          this.clickedline = true
-          this.clickedpen = false
+          this.clickedcircle =false
           this.clickedrec = false
           this.clickedsq = false
-          this.clickedtr = false 
+          this.clickedtr = false
+          this.clickedellipse = false
+          this.clickedline =true
+          this.clickedpen =false
+          this.clickeder= false
+          this.clickedbuc= false
+          this.clickeddl= false
+          this.clickedcp= false
+          this.clickedsel = false
         }
         else if (shapetype === 'pencil')
         {
-          this.clickedcircle = false
-          this.clickedellipse = false
-          this.clickedline = false
-          this.clickedpen = true
+          this.clickedcircle =false
           this.clickedrec = false
           this.clickedsq = false
-          this.clickedtr = false 
+          this.clickedtr = false
+          this.clickedellipse = false
+          this.clickedline =false
+          this.clickedpen =true
+          this.clickeder= false
+          this.clickedbuc= false
+          this.clickeddl= false
+          this.clickedcp= false
+          this.clickedsel = false
         }
         else if (shapetype === 'rectangle')
         {
-          this.clickedcircle = false
-          this.clickedellipse = false
-          this.clickedline = false
-          this.clickedpen = false
+          this.clickedcircle =false
           this.clickedrec = true
           this.clickedsq = false
-          this.clickedtr = false 
+          this.clickedtr = false
+          this.clickedellipse = false
+          this.clickedline =false
+          this.clickedpen =false
+          this.clickeder= false
+          this.clickedbuc= false
+          this.clickeddl= false
+          this.clickedcp= false
+          this.clickedsel = false
         }
         else if (shapetype === 'square')
         {
-          this.clickedcircle = false
-          this.clickedellipse = false
-          this.clickedline = false
-          this.clickedpen = false
+          this.clickedcircle =false
           this.clickedrec = false
           this.clickedsq = true
-          this.clickedtr = false 
+          this.clickedtr = false
+          this.clickedellipse = false
+          this.clickedline =false
+          this.clickedpen =false
+          this.clickeder= false
+          this.clickedbuc= false
+          this.clickeddl= false
+          this.clickedcp= false
+          this.clickedsel = false
         }
         else if (shapetype === 'triangle')
         {
-          this.clickedcircle = false
-          this.clickedellipse = false
-          this.clickedline = false
-          this.clickedpen = false
+          this.clickedcircle =false
           this.clickedrec = false
           this.clickedsq = false
-          this.clickedtr = true 
-
+          this.clickedtr = true
+          this.clickedellipse = false
+          this.clickedline =false
+          this.clickedpen =false
+          this.clickeder= false
+          this.clickedbuc= false
+          this.clickeddl= false
+          this.clickedcp= false
+          this.clickedsel = false
+        }
+        else if (shapetype === 'eraser')
+        {
+          this.clickedcircle =false
+          this.clickedrec = false
+          this.clickedsq = false
+          this.clickedtr = false
+          this.clickedellipse = false
+          this.clickedline =false
+          this.clickedpen =false
+          this.clickeder= true
+          this.clickedbuc= false
+          this.clickeddl= false
+          this.clickedcp= false
+          this.clickedsel = false
         }
 
       this.stage.on('mousedown', (e) => {
@@ -1080,7 +1232,7 @@ Redo() {
           width: 0,
           height: 0,
           fill: this.fill_color,
-          strokeWidth : this.stroke_Width,
+          strokeWidth : parseInt(this.stroke_Width),
           stroke :this.stroke_color,
           draggable:false,
           id: this.shapeID.toString()
@@ -1110,7 +1262,7 @@ Redo() {
         width: 0,
         height: 0,
         fill: this.fill_color,
-        strokeWidth : this.stroke_Width,
+        strokeWidth : parseInt(this.stroke_Width),
         stroke :this.stroke_color,
         draggable:false,
         id: this.shapeID.toString()
@@ -1140,7 +1292,7 @@ Redo() {
         sides: 3,
         radius: 0,
         fill: this.fill_color,
-        strokeWidth : this.stroke_Width,
+        strokeWidth : parseInt(this.stroke_Width),
         stroke :this.stroke_color,
         draggable:false,
         id: this.shapeID.toString()
@@ -1171,7 +1323,7 @@ Redo() {
         radiusX: 0,
         radiusY: 0,
         fill: this.fill_color,
-        strokeWidth : this.stroke_Width,
+        strokeWidth : parseInt(this.stroke_Width),
         stroke :this.stroke_color,
         draggable:false,
         id: this.shapeID.toString()
@@ -1196,7 +1348,7 @@ Redo() {
         this.line = Line.drawLine({
         points: [this.startx, this.starty],
         stroke: this.stroke_color,
-        strokeWidth: this.stroke_Width,
+        strokeWidth: parseInt(this.stroke_Width),
         draggable:false,
         id: this.shapeID.toString()
       });
@@ -1218,7 +1370,7 @@ Redo() {
       let pos = this.stage.getPointerPosition();
       this.pen = Line.drawLine({
       stroke: this.stroke_color,
-      strokeWidth: this.stroke_Width,
+      strokeWidth: parseInt(this.stroke_Width),
       lineCap: 'round', 
       lineJoin: 'round', 
       points: [pos.x, pos.y],
@@ -1244,8 +1396,8 @@ Redo() {
     {
       let pos = this.stage.getPointerPosition();
       this.pen = Line.drawLine({
-      stroke: "aliceblue",
-      strokeWidth: this.stroke_Width,
+      stroke: "#f0f8ff",
+      strokeWidth: parseInt(this.stroke_Width),
       lineCap: 'round', 
       lineJoin: 'round', 
       points: [pos.x, pos.y],
@@ -1286,7 +1438,7 @@ Redo() {
           Shape.strokeWidth = this.circle.strokeWidth();
           Shape.id = this.shapeID;
         }
-        if (shapetype === 'rectangle')
+        else if (shapetype === 'rectangle')
         {
           if (this.rec.height()===0 || this.rec.width()===0)
             return;
@@ -1302,7 +1454,7 @@ Redo() {
 
 
         }
-        if (shapetype === 'square')
+        else if (shapetype === 'square')
         {
           if (this.sq.height()===0 || this.sq.width()===0)
             return;
@@ -1316,7 +1468,7 @@ Redo() {
           Shape.strokeWidth = this.sq.strokeWidth();
           Shape.id = this.shapeID;
         }
-        if (shapetype === 'triangle')
+        else if (shapetype === 'triangle')
         {
           if (this.triangle.radius()==0)
             return;
@@ -1330,7 +1482,7 @@ Redo() {
           Shape.strokeWidth = this.triangle.strokeWidth();
           Shape.id = this.shapeID;
         }
-        if (shapetype === 'ellipse')
+        else if (shapetype === 'ellipse')
         {
           if(this.ellip.radiusX()==0 || this.ellip.radiusY()==0)
             return;
@@ -1345,7 +1497,7 @@ Redo() {
           Shape.id = this.shapeID;
     
         }
-        if (shapetype === 'line')
+        else if (shapetype === 'line')
         {
           if(this.line.points().length<4)
             return;
@@ -1357,7 +1509,7 @@ Redo() {
           Shape.id = this.shapeID;
     
         }
-        if (shapetype === 'pencil')
+        else if (shapetype === 'pencil')
         {
           if(this.pen.points().length<=2)
             return;
@@ -1367,18 +1519,18 @@ Redo() {
           Shape.strokeColor = this.pen.stroke();
           Shape.strokeWidth = this.pen.strokeWidth();
           Shape.id = this.shapeID;
-      }
-      if (shapetype === 'eraser')
+        }
+        else if (shapetype === 'eraser')
         {
           if(this.pen.points().length<=2)
             return;
-          Shape.shapeType = 'pencil';
+          Shape.shapeType = 'eraser';
           Shape.points = this.pen.points();
           Shape.fill = this.pen.fill();
           Shape.strokeColor = this.pen.stroke();
           Shape.strokeWidth = this.pen.strokeWidth();
           Shape.id = this.shapeID;
-      }
+        }
         this.requestdraw(Shape); 
         this.stage.off('mouseup');
         this.shapeID++;
@@ -1449,22 +1601,24 @@ changeFillColor(event) {
     }
     .tools
     {
+      z-index:1;
+      position: fixed;
       background-color:rgb(230, 155, 15);
       border-top-left-radius: 10px;
       border-top-right-radius: 10px;
       width: 100%;
       height: 50px;
-      border-bottom: 5px solid black;
+      border-bottom: 5px solid #000000;
       
     }
     .board
     {
       width: 100%;
-      background-color: aliceblue;
+      background-color: #f0f8ff;
     }
     input.color{
     width: 50px; /* Set the width and height to create a square */
-    height: 100%;
+    height: 40px;
     padding: 5px; /* Remove padding */
     border-radius: 20px;
     border: none;
@@ -1475,6 +1629,8 @@ changeFillColor(event) {
       margin-left: 30px;
       display: flex;
       flex-direction: row;
+      justify-content: center;
+      align-items: center;
       height: 100%;
     }
     .A{
@@ -1536,9 +1692,6 @@ changeFillColor(event) {
     
       
     }
-    select:hover{
-      color:white;
-    }
 
     button:hover
     {
@@ -1557,4 +1710,15 @@ changeFillColor(event) {
     width: 95%;
     
   } 
-  </style>
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent #000000 background */
+  z-index: 1; /* Place it above other elements */
+}
+  
+  
+</style>

@@ -28,7 +28,7 @@ The object-oriented model encapsulates various geometric shapes, fostering a hie
 
 The UML class diagram visually represents the structure of the object-oriented model, meticulously detailing the classes, attributes, and methods. Inheritance relationships and polymorphism are prominently featured, showcasing the elegance of the design.
 
-![UML Class Diagram.png](./markdown/UML_Class_Diagram.png)
+![Blank diagram.png](./markdown/Blank_diagram.png)
 
 ## **3 Application Features**
 
@@ -36,22 +36,38 @@ The UML class diagram visually represents the structure of the object-oriented m
 
 The GUI of the application boasts an extensive array of functionalities for users:
 
-- **Draw:** Users can sketch free-form lines or choose from predefined shapes like ellipse, triangle, rectangle, square, circle and others.
-- **Color:** Shapes can be filled with various colors from a color gradient, enhancing the visual appeal of the canvas.
-- **Resize and Scale:** Shapes are easily adjustable, offering users flexibility in dimension control.
-- **Move:** The cursor facilitates precise positioning of shapes, ensuring accuracy in parameter adjustments.
-- **Copy:** The application seamlessly implements the Prototype Design Pattern for effortless shape duplication.’
-- **Focus on the shape:**  Upon hovering on a shape, the shape is put on focus by changing the colours and adding shadows.
-- **Delete:** Entire shapes or free-form drawings can be removed from the canvas.
-- **Undo and Redo:** Leveraging the Memento Design Pattern, users can navigate through a history of canvas states, undoing or redoing actions.
-- **Clear Canvas:** The entire canvas can be cleared, with the option to undo this action.
-- **Save and Load:** Drawing files can be saved in both XML and JSON formats, and users can reload previous files, with undo/redo history persistence.
+**Main Features**
+
+- Drawing Shapes: For example, Triangle, Square, Rectangle, Line Segment, Ellipse, and Circle (by mouse dragging).
+- Resizing and rotation of the selected object.
+- Select: Selecting the element gives you the ability to resize, move, copy, or delete the shape.
+- Move: Moving the selected object without the need to click on the select button.
+- Delete: Delete the selected object without the need to click on the select button.
+- Copy: Copy the selected object without the need to click on the select button.
+- Colour Picker for Fill and Stroke: Colorizing the shapes while drawing.
+- Undo: The user can undo their last actions as many times as they want.
+- Redo: The user can redo as many times as they want.
+- Save options: Save as JSON and XML files. This also saves your drawing history, meaning that after you load the saved file, you can undo as many times as you want.
+- Load options: Load previously saved JSON and XML drawing files.
+
+**Extra Features**
+
+- Free-hand drawing: Drawing with a pencil in a freeform way with the desired size of the pencil.
+- Eraser: Erasing in a freeform way with the desired size of the eraser.
+- Auto-save: Your unsaved work won’t be lost as long as the backend server is up and running. You can refresh as many times as you want.
+- Hovering on shapes changes their color and adds a shadow to focus on them, helping people concentrate on the shape. It also assists color-blind people.
+- Multiple stroke widths options to select while drawing.
+- Clear the canvas: This action clears the drawing area. It can also be undone if done by mistake.
+- Fill the shape: An option to fill the selected (previously drawn) shape with the desired color from the color picker.
+- There is an endpoint **`/clean`** that can be accessed to clean the database (mostly for developers).
 
 ### **3.2 User-Friendly Interface**
 
-The GUI is designed with a focus on intuitiveness and user-friendliness. Functionality is easily accessible through the interface, providing a seamless user experience.
+The GUI is designed with a focus on user-friendliness. Functionality is easily accessible through the interface, providing a seamless user experience.
 
-[PHOTOS OF UI] PUT HERE
+![Untitled](./markdown/Untitled.png)
+
+![Screenshot 2023-12-10 140120.png](./markdown/Screenshot_2023-12-10_140120.png)
 
 ## **4 Backend Design Patterns**
 
@@ -77,6 +93,7 @@ The GUI is designed with a focus on intuitiveness and user-friendliness. Functio
     - **`/saveJSON` (POST):** Retrieves all shapes from the database and returns their data in JSON format.
     - **`/saveXML` (GET):** Retrieves all shapes from the database and returns their data in XML format.
     - **`/loadXML` (POST):** Accepts XML data, cleans the database, parses the XML to obtain shape data, and draws the shapes on the canvas.
+    - `**/loadJSON` (POST)**: Accepts JSON data, cleans the database, parses the JSON to obtain shape data, and draws the shapes on the canvas.
     - **`/clean` (GET):** Cleans the database by removing all shapes from the database.
 2. **Shape Management:**
     - Shapes are represented using a **`Shape`** class, and their data is transferred between the client and server using **`ShapeDTO`** (Data Transfer Object).
@@ -113,8 +130,6 @@ The GUI is designed with a focus on intuitiveness and user-friendliness. Functio
     - **`undo_stack` and `redo_stack` as Caretaker:**
         - The stacks manage the different states of the **`DrawingArea`** (Originator).
         - The **`undo`** and **`redo`** operations involve popping Mementos from one stack and pushing them onto the other.
-8. **Debugging Functionality:**
-    - The **`DEBUG`** method is used for debugging purposes, printing information about saved shapes, including their data.
 
 ---
 
@@ -122,34 +137,53 @@ The GUI is designed with a focus on intuitiveness and user-friendliness. Functio
 
 The Paint Application harmoniously combines a well-designed object-oriented model with advanced drawing and painting features. The backend design patterns enhance the application's flexibility, maintainability, and overall user experience. With its intuitive interface and comprehensive functionality set, the application stands as a powerful tool for creative expression.
 
-## 7 **Instructions for Running the Code**
+## 8 User How-To Guide
+
+### A- Installation Guide:
 
 ### **Prerequisites**
 
 - Ensure Java and Node.js are installed on your system.
-- Clone the GitHub repository:
+    - Make sure that you install Font Awesome icons:
+        
+         [Set Up with Vue | Font Awesome Docs](https://fontawesome.com/docs/web/use-with/vue/)
+        
+    - Clone the GitHub repository:
+        
+        ```bash
+        git clone https://github.com/ahmedyoussefg/PaintApp.git
+        ```
+        
     
-    ```bash
-    git clone https://github.com/ahmedyoussefg/PaintApp.git
-    ```
+    ### **Backend (Spring Boot)**
+    
+    1. Open the backend project in your preferred IDE.
+    2. Run the Spring Boot application to start the backend server.
+    
+    ### **Frontend (VueJS)**
+    
+    1. Navigate to the front-end project directory and run the following commands:
+        
+        ```bash
+        npm install
+        npm run serve
+        ```
+        
+    2. Access the application in your web browser at the localhost URL.
+    
+    ---
     
 
-### **Backend (Spring Boot)**
+### B- Application Guide
 
-1. Open the backend project in your preferred IDE.
-2. Run the Spring Boot application to start the backend server.
+Video of usage: [htps://drive.google.com/file/d/1OV6NC1OX2X-jKH9di-1vPVWT8v8maIWC/view?usp=drive_link](https://drive.google.com/file/d/1OV6NC1OX2X-jKH9di-1vPVWT8v8maIWC/view?usp=drive_link)
 
-### **Frontend (VueJS)**
+![Untitled](./markdown/Untitled%201.png)
 
-1. Run the following commands:
-    
-    ```bash
-    npm install
-    npm run serve
-    ```
-    
-2. Access the application in your web browser at the provided URL.
+![Untitled](./markdown/Untitled%202.png)
 
-## 8 User How-To Guide
+![Untitled](./markdown/Untitled%203.png)
 
-[VIDEO OF USING THE WEB APPLICATION]
+![Untitled](./markdown/Untitled%204.png)
+
+![Untitled](./markdown/Untitled%205.png)

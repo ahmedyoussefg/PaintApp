@@ -29,7 +29,7 @@ public class Controller {
         Database db = Database.getInstance();
         Shape new_shape = factory.getShape(shape_data);
         db.draw(new_shape);
-        DEBUG();
+//        DEBUG();
     }
 
     @PostMapping(value="/copy")
@@ -40,7 +40,7 @@ public class Controller {
 
         Shape copied = db.copy(db.getShapeByID(Integer.parseInt(shape_id)), Integer.parseInt(copied_id));
         //DEBUG
-        DEBUG();
+//        DEBUG();
         return copied.shapeToDTO();
     }
     @GetMapping(value="/clear")
@@ -53,7 +53,7 @@ public class Controller {
     public ArrayList<ShapeDTO> undo(){
         Database db = Database.getInstance();
         db.undo();
-        DEBUG();
+//        DEBUG();
         return db.getDrawnShapesDTOs();
     }
 
@@ -61,7 +61,7 @@ public class Controller {
     public ArrayList<ShapeDTO> redo(){
         Database db = Database.getInstance();
         db.redo();
-        DEBUG();
+//        DEBUG();
         return db.getDrawnShapesDTOs();
     }
     @PostMapping(value="/update")
@@ -71,7 +71,7 @@ public class Controller {
         Shape new_shape = factory.getShape(data);
         System.out.println("CALLED UPDATE");
         db.update(new_shape);
-        DEBUG();
+//        DEBUG();
     }
 
     @PostMapping(value="/delete")
@@ -88,13 +88,10 @@ public class Controller {
         return db.getDrawnShapesDTOs();
     }
     @PostMapping(value="/loadJSON")
-    public ArrayList<ShapeDTO> loadJSON(@RequestBody ShapeDTO[] ShapeData) {
+    public ArrayList<ShapeDTO> loadJSON(@RequestBody ArrayList<ShapeDTO> ShapeData) {
         Database.cleanDatabase();
-
         System.out.println("LOADING JSON");
-        for (ShapeDTO Shape: ShapeData) {
-            drawShape(Shape);
-        }
+        drawMultipleShapes(ShapeData);
         Database db = Database.getInstance();
         return db.getDrawnShapesDTOs();
     }
@@ -113,35 +110,43 @@ public class Controller {
         xml = URLDecoder.decode(xml, "UTF-8");
         System.out.println(xml);
         System.out.println("loading XML.");
-
         Database.cleanDatabase();
         ArrayList<ShapeDTO> Shapes = xmlService.convertXmlToShapes(xml);
+        drawMultipleShapes(Shapes);
+        Database db = Database.getInstance();
+        return db.getDrawnShapesDTOs();
+    }
 
+    void drawMultipleShapes(ArrayList<ShapeDTO> Shapes){
         for (ShapeDTO Shape: Shapes) {
             drawShape(Shape);
         }
-        return Shapes;
+
     }
-
-
     @GetMapping("/clean")
     public void cleanCanvas() {
         Database.cleanDatabase();
     }
+    @GetMapping("/board")
+    public ArrayList<ShapeDTO> retriveBaord() {
+        Database db = Database.getInstance();
+        return db.getDrawnShapesDTOs();
+        // Database.cleanDatabase();
+    }
 
     // to see saved shapes
-    public void DEBUG(){
-        Database db = Database.getInstance();
-        HashMap<Integer, Shape> test = db.getDrawnShapes();
-        System.out.println("TEST");
-        for (Map.Entry<Integer, Shape> set : test.entrySet()) {
-            int saved_id = set.getKey();
-            Shape saved_shape = set.getValue();
-            System.out.println("SAVED ID = "+ saved_id);
-            System.out.printf("x: %f, y: %f, id: %d %f", saved_shape.getPosition().getX(), saved_shape.getPosition().getY(), saved_shape.getId(), saved_shape.getRotation() );
-
-            System.out.println("_________________________________________");
-        }
-        System.out.println("####################");
-    }
+//    public void DEBUG(){
+//        Database db = Database.getInstance();
+//        HashMap<Integer, Shape> test = db.getDrawnShapes();
+//        System.out.println("TEST");
+//        for (Map.Entry<Integer, Shape> set : test.entrySet()) {
+//            int saved_id = set.getKey();
+//            Shape saved_shape = set.getValue();
+//            System.out.println("SAVED ID = "+ saved_id);
+//            System.out.printf("x: %f, y: %f, id: %d %f", saved_shape.getPosition().getX(), saved_shape.getPosition().getY(), saved_shape.getId(), saved_shape.getRotation() );
+//
+//            System.out.println("_________________________________________");
+//        }
+//        System.out.println("####################");
+//    }
 }
